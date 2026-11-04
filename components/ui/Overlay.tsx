@@ -107,7 +107,7 @@ function Shell({ variant, open, onClose, title, closeLabel, description, header,
                 <X aria-hidden className="size-5" />
               </button>
             </div>
-            <div tabIndex={0} className="min-h-0 flex-1 overflow-y-auto px-6 pb-6 focus-visible:outline-offset-[-3px]">
+            <div tabIndex={0} className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 focus-visible:outline-offset-[-3px] min-[360px]:px-6">
               {children}
             </div>
             {footer && <div className="border-t border-line bg-surface px-6 py-4">{footer}</div>}

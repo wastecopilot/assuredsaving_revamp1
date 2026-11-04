@@ -112,7 +112,12 @@ export function Header() {
           </nav>
 
           <p className="min-w-0 flex-1 truncate text-sm font-semibold lg:hidden" aria-live="polite">
-            <span className="text-on-dark-muted">{t("stepOf", { n: idx + 1, total: visible.length })} · </span>
+            <span className="text-on-dark-muted">
+              <span className="sm:hidden" aria-hidden>
+                {idx + 1}/{visible.length} ·{" "}
+              </span>
+              <span className="max-sm:sr-only">{t("stepOf", { n: idx + 1, total: visible.length })} · </span>
+            </span>
             {t(`stage_${current}`)}
           </p>
 
@@ -165,14 +170,17 @@ function ContextBar() {
             </li>
           )}
           {s.address && (
-            <li className={clsx(chip, "max-w-[22rem]")}>
+            <li className={clsx(chip, "max-w-[15rem] sm:max-w-[22rem]")}>
               <MapPin aria-hidden className="size-3.5 shrink-0 text-tv-text" />
               <span className="truncate">
-                {s.address.line1}, {s.address.city}, {s.address.state}
+                {s.address.line1}
+                <span className="max-sm:hidden">
+                  , {s.address.city}, {s.address.state}
+                </span>
               </span>
               <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary-soft px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-primary">
                 {s.address.type === "business" ? <Building2 aria-hidden className="size-3" /> : <Home aria-hidden className="size-3" />}
-                {t(s.address.type === "business" ? "businessTag" : "residentialTag")}
+                <span className="max-sm:sr-only">{t(s.address.type === "business" ? "businessTag" : "residentialTag")}</span>
               </span>
             </li>
           )}

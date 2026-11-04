@@ -257,7 +257,7 @@ export function CallbackModal() {
           <p className="text-sm text-ink">{t("cbCodeSent", { phone: shown })}</p>
           <fieldset>
             <legend className="mb-3 text-sm font-bold text-ink">{t("cbCode")}</legend>
-            <div className="grid grid-cols-6 gap-2" onPaste={onPaste}>
+            <div className="grid grid-cols-6 gap-1 min-[360px]:gap-2" onPaste={onPaste}>
               {code.map((d, i) => (
                 <input
                   key={i}
