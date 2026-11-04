@@ -23,8 +23,8 @@ export function Section({ stage, accent, children, className }: { stage: StageNa
       transition={{ duration: reduce ? 0.1 : 0.4, ease: [0.2, 0.8, 0.2, 1] }}
       className={clsx("scroll-mt-32", className)}
     >
-      <div className="overflow-hidden rounded-lg border border-line bg-surface shadow-md">
-        <div aria-hidden className="h-1" style={{ background: accent }} />
+      <div className="rounded-lg border border-line bg-surface shadow-md">
+        <div aria-hidden className="h-1 rounded-t-[15px]" style={{ background: accent }} />
         <div className="p-5 sm:p-8">
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-surface2 px-2.5 py-1 text-xs font-semibold text-muted">
             <span className="flex size-5 items-center justify-center rounded-full bg-navy text-[11px] text-white">{num}</span>

@@ -144,7 +144,7 @@ export function AddressSection() {
                   </button>
                 )}
               </div>
-              <ul id={listId} role="listbox" aria-label={t("addressLabel")} hidden={!open} className="absolute inset-x-0 top-full z-30 mt-2 max-h-80 overflow-auto rounded-lg border border-line bg-surface p-1.5 shadow-overlay">
+              <ul id={listId} role="listbox" aria-label={t("addressLabel")} hidden={!open} className="relative z-10 mt-2 max-h-80 overflow-auto rounded-lg border border-line bg-surface p-1.5 shadow-overlay">
                 {matches.map((a, i) => (
                   <li
                     key={a.id}
