@@ -89,11 +89,12 @@ function Shell({ variant, open, onClose, title, closeLabel, description, header,
             exit={reduce ? { opacity: 0 } : drawer ? { x: 60, opacity: 0 } : { y: 30, opacity: 0 }}
             transition={reduce ? { duration: 0.1 } : { type: "spring", stiffness: 360, damping: 34 }}
           >
+            <div aria-hidden className="bg-cta h-1.5 w-full shrink-0" />
             <div aria-hidden className="mx-auto mt-3 h-1.5 w-12 rounded-full bg-line-strong sm:hidden" />
             <div className="flex items-start justify-between gap-4 px-6 pb-4 pt-4 sm:pt-6">
               <div className="min-w-0">
                 {header}
-                <h2 id={titleId} className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+                <h2 id={titleId} className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">
                   {title}
                 </h2>
                 {description && (

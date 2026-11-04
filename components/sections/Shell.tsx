@@ -1,25 +1,28 @@
 "use client";
-import { ArrowLeft, Check, Lock, ShieldCheck, Zap, Eye } from "lucide-react";
+import { ArrowLeft, Building2, Check, Eye, Home, Layers, MapPin, PhoneCall, RotateCcw, ShieldCheck, User, Zap } from "lucide-react";
 import clsx from "clsx";
+import { LEGAL, SERVICE_ORDER } from "@/data/catalog";
+import { presetFor } from "@/lib/presets";
 import { STAGE_NAMES, useStore, type StageName } from "@/lib/store";
 import { service } from "@/lib/tokens";
+import { SERVICE_ICON } from "../ui";
 
-/** Shield-check mark: navy tile with an azure shield. */
-export function Logo({ size = 32 }: { size?: number }) {
+/** Brand mark: a gradient tile with a shield, a check and a small spark. */
+export function Logo({ size = 36 }: { size?: number }) {
   return (
-    <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden className="shrink-0">
-      <rect width="32" height="32" rx="8" fill="var(--navy)" />
-      <path d="M16 5.5 7 9v6.4c0 5.6 3.8 9.6 9 11.1 5.2-1.5 9-5.5 9-11.1V9l-9-3.5Z" fill="var(--primary)" />
-      <path d="m11.7 16 3 3 5.8-6" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 36 36" width={size} height={size} aria-hidden className="shrink-0">
+      <defs>
+        <linearGradient id="lg-mark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#E0167A" />
+          <stop offset="0.55" stopColor="#7B2FE0" />
+          <stop offset="1" stopColor="#12C8E8" />
+        </linearGradient>
+      </defs>
+      <rect width="36" height="36" rx="11" fill="url(#lg-mark)" />
+      <path d="M18 7.5 9.5 10.8v6c0 5.3 3.6 9 8.5 10.4 4.9-1.4 8.5-5.1 8.5-10.4v-6L18 7.5Z" fill="#fff" fillOpacity=".18" stroke="#fff" strokeWidth="1.6" />
+      <path d="m13.8 17.6 3 3 5.6-5.8" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M28.5 4.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="#fff" />
     </svg>
-  );
-}
-
-export function Wordmark() {
-  return (
-    <span className="text-[17px] leading-none tracking-tight text-ink">
-      <span className="font-medium">Assured</span> <span className="font-bold">Saving</span>
-    </span>
   );
 }
 
@@ -41,41 +44,27 @@ export function useVisibleStages(): StageName[] {
   return STAGE_NAMES.filter((n) => (n === "usage" ? s.services.includes("internet") : n === "tv" ? s.services.includes("tv") : true));
 }
 
-/** Slim navy utility bar: independence note, US-only badge and the language switch. */
-function UtilityBar() {
+function LangSwitch() {
   const { s, dispatch, t } = useStore();
   return (
-    <div className="bg-navy text-[#C7D3EA]">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-1.5 sm:px-6">
-        <p className="flex min-w-0 items-center gap-2 text-xs">
-          <Lock aria-hidden className="size-3.5 shrink-0" />
-          <span className="truncate">{t("utilityNote")}</span>
-        </p>
-        <div className="flex shrink-0 items-center gap-2">
-          <span title={t("usOnlyTitle")} className="hidden items-center gap-1.5 text-xs font-semibold text-white sm:inline-flex">
-            <Flag />
-            {t("usOnly")}
-          </span>
-          <div role="group" aria-label={t("language")} className="flex rounded-[8px] bg-white/10 p-0.5">
-            {(["en", "es"] as const).map((l) => (
-              <button
-                key={l}
-                type="button"
-                lang={l}
-                aria-pressed={s.lang === l}
-                onClick={() => dispatch({ type: "patch", patch: { lang: l } })}
-                className={clsx("min-h-11 min-w-11 rounded-[6px] px-2 text-xs font-semibold transition-colors", s.lang === l ? "bg-white text-navy" : "text-white hover:bg-white/10")}
-              >
-                {l === "en" ? "ENG" : "ESP"}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+    <div role="group" aria-label={t("language")} className="glass flex rounded-full p-1">
+      {(["en", "es"] as const).map((l) => (
+        <button
+          key={l}
+          type="button"
+          lang={l}
+          aria-pressed={s.lang === l}
+          onClick={() => dispatch({ type: "patch", patch: { lang: l } })}
+          className={clsx("min-h-11 min-w-11 rounded-full px-2.5 text-xs font-bold tracking-wide transition-colors", s.lang === l ? "bg-white text-navy" : "text-white hover:bg-white/10")}
+        >
+          {l === "en" ? "ENG" : "ESP"}
+        </button>
+      ))}
     </div>
   );
 }
 
+/** Midnight app bar: brand, step pills (desktop) or "Step x of y" (phones), language, back. */
 export function Header() {
   const { s, dispatch, t } = useStore();
   const visible = useVisibleStages();
@@ -84,90 +73,179 @@ export function Header() {
   const pct = ((idx + 1) / visible.length) * 100;
   return (
     <header className="sticky top-0 z-40">
-      <UtilityBar />
-      <div className="border-b border-line bg-surface">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
-          <a href="#section-intent" className="flex min-h-11 min-w-11 shrink-0 items-center gap-2.5 rounded-md" aria-label="Assured Saving">
+      <div className="border-b border-white/10 bg-navy text-white">
+        <div className="mx-auto flex h-[68px] max-w-7xl items-center gap-3 px-4 sm:px-6">
+          <a href="#section-intent" className="flex min-h-11 min-w-11 shrink-0 items-center gap-2.5 rounded-xl" aria-label="Assured Saving">
             <Logo />
-            <span className="hidden sm:inline">
-              <Wordmark />
+            <span className="hidden text-[17px] leading-none tracking-tight sm:inline">
+              <span className="font-medium text-on-dark-muted">Assured</span> <span className="font-extrabold">Saving</span>
             </span>
           </a>
 
-          {/* Step tracker (desktop) */}
           <nav aria-label={t("progressLabel")} className="hidden flex-1 justify-center lg:flex">
-            <ol className="flex items-center gap-1">
+            <ol className="glass flex items-center gap-1 rounded-full p-1">
               {visible.map((n, i) => {
                 const state = i < idx ? "done" : i === idx ? "now" : "todo";
                 return (
-                  <li key={n} className="flex items-center gap-1" aria-current={state === "now" ? "step" : undefined}>
+                  <li key={n} aria-current={state === "now" ? "step" : undefined}>
                     <span
                       className={clsx(
-                        "flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-semibold",
-                        state === "now" ? "bg-primary-soft text-primary" : state === "done" ? "text-ink" : "text-muted",
+                        "flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3 text-xs font-bold transition-colors",
+                        state === "now" ? "bg-cta text-white shadow-glow" : state === "done" ? "text-white" : "text-on-dark-muted",
                       )}
                     >
                       <span
                         aria-hidden
                         className={clsx(
-                          "flex size-5 items-center justify-center rounded-full text-[11px]",
-                          state === "done" ? "bg-success text-white" : state === "now" ? "bg-primary text-white" : "border border-line-strong text-muted",
+                          "flex size-6 items-center justify-center rounded-full text-[11px]",
+                          state === "done" ? "bg-security text-ink" : state === "now" ? "bg-white text-primary" : "bg-white/10 text-white",
                         )}
                       >
-                        {state === "done" ? <Check className="size-3" strokeWidth={3.5} /> : i + 1}
+                        {state === "done" ? <Check className="size-3.5" strokeWidth={3.5} /> : i + 1}
                       </span>
                       {t(`stage_${n}`)}
                     </span>
-                    {i < visible.length - 1 && <span aria-hidden className={clsx("h-px w-5", i < idx ? "bg-success" : "bg-line-strong")} />}
                   </li>
                 );
               })}
             </ol>
           </nav>
 
-          {/* Compact step label (mobile / tablet) */}
-          <p className="min-w-0 flex-1 truncate text-sm font-semibold text-ink lg:hidden" aria-live="polite">
-            <span className="text-muted">{t("stepOf", { n: idx + 1, total: visible.length })} · </span>
+          <p className="min-w-0 flex-1 truncate text-sm font-semibold lg:hidden" aria-live="polite">
+            <span className="text-on-dark-muted">{t("stepOf", { n: idx + 1, total: visible.length })} · </span>
             {t(`stage_${current}`)}
           </p>
 
+          <span title={t("usOnlyTitle")} className="hidden items-center gap-1.5 text-xs font-bold text-white xl:inline-flex">
+            <Flag />
+            {t("usOnly")}
+          </span>
+          <LangSwitch />
           {s.stage > 0 && (
             <button
               type="button"
               onClick={() => dispatch({ type: "back" })}
               aria-label={t("backAria")}
-              className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 rounded-md border border-line-strong bg-surface px-3 text-sm font-semibold text-ink shadow-sm transition-colors hover:border-primary hover:text-primary"
+              className="glass inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 rounded-full px-3 text-sm font-bold text-white transition-colors hover:bg-white/15"
             >
               <ArrowLeft aria-hidden className="size-4" />
               <span className="hidden sm:inline">{t("back")}</span>
             </button>
           )}
         </div>
-        <div className="h-[3px] w-full bg-line lg:hidden" role="progressbar" aria-label={t("progressLabel")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)}>
-          <div className="h-full bg-primary transition-[width] duration-500 ease-out" style={{ width: `${pct}%` }} />
+        <div className="h-[3px] w-full bg-white/10 lg:hidden" role="progressbar" aria-label={t("progressLabel")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)}>
+          <div className="bg-cta h-full transition-[width] duration-500 ease-out" style={{ width: `${pct}%` }} />
         </div>
       </div>
+      <ContextBar />
     </header>
   );
 }
 
-export function TrustStrip() {
+/**
+ * Context chips under the app bar once the visitor has told us something:
+ * name, address with its detected type, services (bundle or single), and the
+ * plan count. Plus "Get a call from Aria" and "Start over".
+ */
+function ContextBar() {
+  const { s, t, dispatch } = useStore();
+  const chosen = SERVICE_ORDER.filter((x) => s.services.includes(x));
+  if (s.stage < 1 || !chosen.length) return null;
+  const bundle = presetFor(s.services);
+  const first = s.name.trim().split(/\s+/)[0];
+  const chip = "inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1 text-xs font-bold text-ink";
+  return (
+    <div className="border-b border-line bg-surface/95 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 sm:px-6">
+        <ul tabIndex={0} aria-label={t("ctxLabel")} className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto rounded-full [scrollbar-width:none]">
+          {s.name.trim().length >= 2 && (
+            <li className={chip}>
+              <User aria-hidden className="size-3.5 text-primary" />
+              {first}
+            </li>
+          )}
+          {s.address && (
+            <li className={clsx(chip, "max-w-[22rem]")}>
+              <MapPin aria-hidden className="size-3.5 shrink-0 text-tv-text" />
+              <span className="truncate">
+                {s.address.line1}, {s.address.city}, {s.address.state}
+              </span>
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-primary-soft px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-primary">
+                {s.address.type === "business" ? <Building2 aria-hidden className="size-3" /> : <Home aria-hidden className="size-3" />}
+                {t(s.address.type === "business" ? "businessTag" : "residentialTag")}
+              </span>
+            </li>
+          )}
+          <li className={chip}>
+            <span aria-hidden className="flex -space-x-1">
+              {chosen.map((x) => {
+                const Icon = SERVICE_ICON[x];
+                return (
+                  <span key={x} className="flex size-5 items-center justify-center rounded-full ring-2 ring-surface" style={{ background: service[x].vivid, color: service[x].on }}>
+                    <Icon className="size-3" strokeWidth={2.6} />
+                  </span>
+                );
+              })}
+            </span>
+            {bundle ? (
+              <>
+                <Layers aria-hidden className="size-3.5 text-primary" />
+                {t("ctxBundle")}
+              </>
+            ) : (
+              chosen.map((x) => t(`svc_${x}`)).join(" + ")
+            )}
+          </li>
+          {s.scanDone && s.resultsSummary && (
+            <li className={clsx(chip, "border-transparent bg-security-soft text-security-text")}>
+              <Check aria-hidden className="size-3.5" strokeWidth={3} />
+              {t("plansCount", { n: s.resultsSummary.count })}
+            </li>
+          )}
+        </ul>
+        <button
+          type="button"
+          onClick={() => dispatch({ type: "patch", patch: { modal: { kind: "callback", planId: null } } })}
+          className="hidden min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3 text-xs font-bold text-primary hover:bg-primary-soft md:inline-flex"
+        >
+          <PhoneCall aria-hidden className="size-4" />
+          {t("scheduleCallback")}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            dispatch({ type: "reset" });
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-bold text-muted hover:bg-surface2 hover:text-ink"
+        >
+          <RotateCcw aria-hidden className="size-4" />
+          <span className="hidden sm:inline">{t("startOver")}</span>
+          <span className="sr-only sm:hidden">{t("startOver")}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** Trust · Transparency · Speed, as glowing pills on the midnight stage. */
+export function TrustRow() {
   const { t } = useStore();
   const items = [
-    { icon: ShieldCheck, label: t("trust"), sub: t("trustSub"), c: service.security },
-    { icon: Eye, label: t("transparency"), sub: t("transparencySub"), c: service.internet },
-    { icon: Zap, label: t("speed"), sub: t("speedSub"), c: service.phone },
+    { icon: ShieldCheck, label: t("trust"), sub: t("trustSub"), c: service.security.vivid },
+    { icon: Eye, label: t("transparency"), sub: t("transparencySub"), c: service.internet.vivid },
+    { icon: Zap, label: t("speed"), sub: t("speedSub"), c: service.mobile.vivid },
   ];
   return (
     <ul className="grid gap-3 sm:grid-cols-3">
       {items.map((i) => (
-        <li key={i.label} className="flex items-start gap-3 rounded-md border border-line bg-surface p-3.5">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-[8px]" style={{ background: i.c.soft, color: i.c.text }}>
-            <i.icon aria-hidden className="size-[18px]" />
+        <li key={i.label} className="glass flex items-center gap-3 rounded-2xl px-4 py-3">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl" style={{ background: i.c, color: "#0E1236" }}>
+            <i.icon aria-hidden className="size-[18px]" strokeWidth={2.4} />
           </span>
-          <span>
-            <span className="block text-sm font-semibold text-ink">{i.label}</span>
-            <span className="block text-xs text-muted">{i.sub}</span>
+          <span className="min-w-0">
+            <span className="block text-sm font-extrabold text-white">{i.label}</span>
+            <span className="block text-xs text-on-dark-muted">{i.sub}</span>
           </span>
         </li>
       ))}
@@ -175,7 +253,37 @@ export function TrustStrip() {
   );
 }
 
-/** Soft azure wash at the top of the page (cheap CSS gradient). */
-export function Glows() {
-  return <div className="glows" aria-hidden />;
+export function Footer() {
+  const { t } = useStore();
+  return (
+    <footer className="stage mt-16">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-md">
+            <div className="flex items-center gap-2.5">
+              <Logo size={32} />
+              <span className="text-base tracking-tight">
+                <span className="font-medium text-on-dark-muted">Assured</span> <span className="font-extrabold">Saving</span>
+              </span>
+            </div>
+            <p className="mt-3 text-sm text-on-dark-muted">{t("footerNote")}</p>
+          </div>
+          <nav aria-label="Legal" className="flex flex-wrap gap-x-2">
+            {[
+              [t("cbTerms"), LEGAL.terms],
+              [t("cbPrivacy"), LEGAL.privacy],
+              [t("cbSmsTerms"), LEGAL.sms],
+            ].map(([label, href]) => (
+              <a key={href} href={href} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center rounded-full px-3 text-sm font-bold text-white hover:bg-white/10">
+                {label}
+              </a>
+            ))}
+          </nav>
+        </div>
+        <p className="mt-8 border-t border-white/10 pt-5 text-xs text-on-dark-muted">
+          © {new Date().getFullYear()} Assured Saving · {t("previewTag")}
+        </p>
+      </div>
+    </footer>
+  );
 }

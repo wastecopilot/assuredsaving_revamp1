@@ -31,12 +31,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       type={type}
       className={clsx(
-        "inline-flex select-none items-center justify-center gap-2 rounded-md font-semibold transition-[transform,box-shadow,background-color,border-color,color] duration-150",
+        "inline-flex select-none items-center justify-center gap-2 rounded-full font-bold transition-[transform,box-shadow,background-color,border-color,color] duration-150",
         "active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100",
-        size === "lg" ? "min-h-12 whitespace-nowrap px-6 text-base" : "min-h-11 whitespace-nowrap px-4 text-sm",
-        variant === "primary" && "bg-primary text-white shadow-sm hover:bg-primary-strong hover:shadow-glow",
-        variant === "secondary" && "border border-line-strong bg-surface text-ink shadow-sm hover:border-primary hover:text-primary",
-        variant === "soft" && "bg-primary-soft text-primary hover:bg-[#d9e5ff]",
+        size === "lg" ? "min-h-[52px] whitespace-nowrap px-7 text-base" : "min-h-11 whitespace-nowrap px-5 text-sm",
+        variant === "primary" && "bg-cta text-white shadow-glow hover:brightness-110",
+        variant === "secondary" && "border-2 border-line-strong bg-surface text-ink hover:border-primary hover:text-primary",
+        variant === "soft" && "bg-primary-soft text-primary hover:bg-[#e2d9ff]",
         variant === "ghost" && "text-ink hover:bg-surface2",
         block && "w-full",
         className,
@@ -59,7 +59,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   trailing?: ReactNode;
   hideLabel?: boolean;
 }
-const field = "min-h-12 w-full rounded-md border bg-surface px-4 text-base text-ink shadow-sm transition-[border-color,box-shadow] placeholder:text-muted hover:border-[#b6c1d2] focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15";
+const field = "min-h-[52px] w-full rounded-2xl border-2 bg-surface2 px-4 text-base text-ink transition-[border-color,box-shadow,background-color] placeholder:text-muted hover:border-[#aeb2cf] focus:border-primary focus:bg-surface focus:outline-none focus:ring-4 focus:ring-primary/15";
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input({ label, hint, error, icon, trailing, hideLabel, id, className, ...rest }, ref) {
   const auto = useId();
   const fid = id ?? auto;
@@ -124,7 +124,7 @@ export function Checkbox({ id, checked, onChange, children, hint, error }: { id:
       <label
         htmlFor={id}
         className={clsx(
-          "flex cursor-pointer gap-3 rounded-md border p-4 transition-colors",
+          "flex cursor-pointer gap-3 rounded-2xl border-2 p-4 transition-colors",
           checked ? "border-primary bg-primary-soft/50" : error ? "border-danger" : "border-line hover:border-line-strong",
         )}
       >
@@ -182,7 +182,7 @@ export function SegmentedControl<T extends string>({
     (e.currentTarget.parentElement?.children[n] as HTMLElement | undefined)?.focus();
   };
   return (
-    <div role="radiogroup" aria-label={label} className={clsx("inline-flex rounded-md border border-line bg-surface2 p-1", className)}>
+    <div role="radiogroup" aria-label={label} className={clsx("inline-flex rounded-full border border-line bg-surface2 p-1", className)}>
       {options.map((o, i) => {
         const on = o.value === value;
         return (
@@ -195,8 +195,8 @@ export function SegmentedControl<T extends string>({
             onClick={() => onChange(o.value)}
             onKeyDown={(e) => onKey(e, i)}
             className={clsx(
-              "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-[8px] px-4 text-sm font-semibold transition-all duration-200",
-              on ? "bg-surface text-ink shadow-sm ring-1 ring-line-strong" : "text-muted hover:text-ink",
+              "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full px-4 text-sm font-bold transition-all duration-200",
+              on ? "bg-cta text-white shadow-glow" : "text-muted hover:text-ink",
             )}
           >
             {o.icon}
@@ -211,7 +211,7 @@ export function SegmentedControl<T extends string>({
 /* --------------------------------- Badge -------------------------------- */
 export function Badge({ children, bg, fg, className, icon }: { children: ReactNode; bg: string; fg: string; className?: string; icon?: ReactNode }) {
   return (
-    <span className={clsx("inline-flex items-center gap-1 whitespace-nowrap rounded-[6px] px-2 py-0.5 text-xs font-semibold", className)} style={{ background: bg, color: fg }}>
+    <span className={clsx("inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-bold", className)} style={{ background: bg, color: fg }}>
       {icon}
       {children}
     </span>
@@ -229,7 +229,7 @@ export function Chip({ selected, onClick, children, color, role }: { selected: b
       aria-checked={role ? selected : undefined}
       onClick={onClick}
       className={clsx(
-        "inline-flex min-h-11 items-center gap-1.5 rounded-md border px-3.5 text-sm font-medium transition-all duration-150 active:scale-[0.98]",
+        "inline-flex min-h-11 items-center gap-1.5 rounded-full border-2 px-4 text-sm font-bold transition-all duration-150 active:scale-[0.98]",
         !selected && "border-line-strong bg-surface text-ink hover:border-primary/50",
         selected && !c && "border-primary bg-primary-soft text-primary",
       )}
@@ -251,7 +251,7 @@ export function Slider({ label, value, min, max, onChange, display, minLabel, ma
         <label htmlFor={id} className="text-sm font-semibold text-ink">
           {label}
         </label>
-        <span aria-hidden className="text-2xl font-semibold text-ink tabular">
+        <span aria-hidden className="text-grad text-3xl font-extrabold tabular">
           {display ?? value}
         </span>
       </div>
@@ -282,11 +282,11 @@ export const Skeleton = ({ className }: { className?: string }) => <div aria-hid
 /* ------------------------------ EmptyState ------------------------------ */
 export function EmptyState({ title, body, action }: { title: string; body: ReactNode; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center rounded-lg border border-dashed border-line-strong bg-surface px-6 py-12 text-center">
+    <div className="flex flex-col items-center rounded-[28px] border-2 border-dashed border-line-strong bg-surface px-6 py-12 text-center">
       <span className="flex size-14 items-center justify-center rounded-full bg-primary-soft text-primary">
         <SearchX aria-hidden className="size-7" />
       </span>
-      <h3 className="mt-4 text-xl font-semibold text-ink">{title}</h3>
+      <h3 className="mt-4 text-xl font-extrabold text-ink">{title}</h3>
       <p className="mt-2 max-w-md text-base text-muted">{body}</p>
       {action && <div className="mt-6">{action}</div>}
     </div>

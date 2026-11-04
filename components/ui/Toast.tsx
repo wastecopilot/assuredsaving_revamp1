@@ -23,7 +23,7 @@ export function ToastProvider({ children, closeLabel }: { children: ReactNode; c
       {children}
       <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-2 p-4 sm:items-end">
         {items.map((t) => (
-          <div key={t.id} role="status" className="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-lg border border-line bg-surface p-4 shadow-overlay">
+          <div key={t.id} role="status" className="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-[20px] border border-line bg-surface p-4 shadow-overlay">
             <CheckCircle2 aria-hidden className="mt-0.5 size-5 shrink-0 text-success" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-ink">{t.title}</p>

@@ -1,3 +1,15 @@
+# Assured Saving enterprise revamp: audit
+
+This build shares its content, data, pricing rules and address flow with the bright one-pager revamp, so the audit below still applies. The visual direction ("Midnight Spectrum") comes from the reference boards in `assuredsaving uiux refined`: color-blocked service tiles, a dark neon hero, context chips, provider scan bars, colored plan headers and dark TV tier cards. The bright one-pager revamp rejected the dark neon boards; this build uses them on purpose so the two designs are clearly different. It still leaves out the boards' invented stats, ratings and metallic or 3D clay styling.
+
+The enterprise pass added:
+
+- **Orientation**: step pills in the app bar (desktop), "Step x of y" with a progress bar (phones), and a gradient step tile on every step card.
+- **Context**: chips under the app bar (name, address with detected type, services or bundle, plan count), so visitors never lose what they chose while scrolling.
+- **Comparison**: a semantic comparison table for plans after the top 3 on wide screens, with the same columns for every row. Smaller screens keep cards.
+- **Recognition**: one solid color per service everywhere (tiles, chips, scan, plan headers).
+- **Accessibility**: AA contrast for every token pair (`npm run contrast`), 44px targets, visible focus rings (neon on dark), table caption and row headers, reduced motion respected.
+
 ## Original audit (one-pager revamp)
 
 ## Sources studied

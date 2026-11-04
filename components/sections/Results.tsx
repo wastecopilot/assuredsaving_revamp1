@@ -76,13 +76,13 @@ export function ResultsSection() {
       {/* Header */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
-          <p className="inline-flex rounded-[6px] bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">{category}</p>
-          <h2 id="section-results-h" tabIndex={-1} className="mt-3 text-2xl font-semibold leading-tight tracking-tight text-ink outline-none sm:text-[2rem]">
+          <p className="bg-cta inline-flex rounded-full px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-white">{category}</p>
+          <h2 id="section-results-h" tabIndex={-1} className="mt-3 text-[1.75rem] font-extrabold leading-tight tracking-tight text-ink outline-none sm:text-[2.5rem]">
             {t("plansFound", { n: plans.length })}{" "}
-            <span className="block text-base font-medium tracking-normal text-muted sm:text-lg">{s.address ? `${s.address.line1}, ${s.address.city}, ${s.address.state} ${s.address.zip}` : ""}</span>
+            <span className="mt-1 block text-base font-semibold tracking-normal text-muted sm:text-lg">{s.address ? `${s.address.line1}, ${s.address.city}, ${s.address.state} ${s.address.zip}` : ""}</span>
           </h2>
           {first && (
-            <p className="mt-4 flex max-w-3xl items-start gap-2 rounded-md border border-security/25 bg-security-soft px-3 py-2.5 text-sm font-medium text-ink">
+            <p className="mt-4 flex max-w-3xl items-start gap-2 rounded-2xl border-2 border-security bg-security-soft px-4 py-3 text-sm font-semibold text-ink">
               <BadgeCheck aria-hidden className="mt-0.5 size-5 shrink-0 text-security-text" />
               {t("topMatch", { provider: first.provider, plan: first.name, price: money(allInNow(first)) })}
             </p>
@@ -102,8 +102,8 @@ export function ResultsSection() {
       </div>
 
       {missing.length > 0 && (
-        <p role="status" className="mt-6 flex gap-3 rounded-lg border border-phone bg-phone-soft p-4 text-sm font-semibold text-ink">
-          <Info aria-hidden className="mt-0.5 size-5 shrink-0 text-phone-text" />
+        <p role="status" className="mt-6 flex gap-3 rounded-2xl border-2 border-mobile bg-mobile-soft p-4 text-sm font-semibold text-ink">
+          <Info aria-hidden className="mt-0.5 size-5 shrink-0 text-mobile-text" />
           {t("fallback", { missing: missing.map(name).join(" + "), covered: covered.map(name).join(" + ") })}
         </p>
       )}
@@ -116,7 +116,7 @@ export function ResultsSection() {
         <>
           {!filtered && (
             <div className="mt-10">
-              <h3 className="text-2xl font-semibold text-ink">{t("ourTopPicks")}</h3>
+              <h3 className="text-2xl font-extrabold tracking-tight text-ink sm:text-[1.75rem]">{t("ourTopPicks")}</h3>
               <p className="mb-5 mt-1 text-sm text-muted">{t("rankedBy")}</p>
               {grid(top, true)}
             </div>
@@ -130,7 +130,7 @@ export function ResultsSection() {
                   aria-expanded={showAll}
                   aria-controls="all-plans"
                   onClick={() => setShowAll((v) => !v)}
-                  className="flex min-h-12 w-full items-center justify-center gap-2 rounded-md border border-line-strong bg-surface px-4 text-sm font-semibold text-ink shadow-sm transition-colors hover:border-primary hover:text-primary"
+                  className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/40 bg-primary-soft px-4 text-sm font-extrabold text-primary transition-colors hover:border-primary hover:text-primary"
                 >
                   <ListChecks aria-hidden className="size-5" />
                   {showAll ? t("hideAll") : t("seeAll", { n: plans.length })}
@@ -140,7 +140,7 @@ export function ResultsSection() {
               <div id="all-plans" hidden={!showAll && !filtered} className="mt-6">
                 {providers.length > 1 && (
                   <div className="mb-5">
-                    <p id="carrier-h" className="mb-2 text-xs font-semibold uppercase tracking-[0.1em] text-muted">{t("filterByCarrier")}</p>
+                    <p id="carrier-h" className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-muted">{t("filterByCarrier")}</p>
                     <div role="radiogroup" aria-labelledby="carrier-h" className="flex flex-wrap gap-2">
                       {["ALL", ...providers].map((p) => (
                         <Chip key={p} role="radio" selected={s.carrier === p} onClick={() => { dispatch({ type: "patch", patch: { carrier: p } }); setShowAll(true); }}>
@@ -157,7 +157,7 @@ export function ResultsSection() {
                 ) : (
                   rest.length > 0 && (
                     <>
-                      <h3 className="text-lg font-semibold text-ink">{t("compareTitle", { n: rest.length })}</h3>
+                      <h3 className="text-xl font-extrabold tracking-tight text-ink">{t("compareTitle", { n: rest.length })}</h3>
                       <p className="mb-4 mt-1 text-sm text-muted">{t("compareSub")}</p>
                       {list(rest)}
                     </>
@@ -172,16 +172,16 @@ export function ResultsSection() {
       {s.services.includes("tv") && <DirectvTiers />}
 
       <div className="mt-10 grid gap-4 lg:grid-cols-2">
-        <section aria-labelledby="fees-h" className="rounded-lg bg-surface2 p-5">
-          <h3 id="fees-h" className="flex items-center gap-2 text-base font-semibold text-ink">
+        <section aria-labelledby="fees-h" className="rounded-[20px] border border-line bg-surface2 p-5 sm:p-6">
+          <h3 id="fees-h" className="flex items-center gap-2 text-base font-extrabold text-ink">
             <Info aria-hidden className="size-5 text-primary" />
             {t("allInMonthly")}
           </h3>
           <p className="mt-2 text-sm text-ink">{t("feeNote")}</p>
           <p className="mt-3 text-xs leading-relaxed text-muted">{PRICE_DISCLAIMER[s.lang]}</p>
         </section>
-        <section aria-labelledby="how-h" className="rounded-lg bg-surface2 p-5">
-          <h3 id="how-h" className="flex items-center gap-2 text-base font-semibold text-ink">
+        <section aria-labelledby="how-h" className="rounded-[20px] border border-line bg-surface2 p-5 sm:p-6">
+          <h3 id="how-h" className="flex items-center gap-2 text-base font-extrabold text-ink">
             <BadgeCheck aria-hidden className="size-5 text-security-text" />
             {t("howTitle")}
           </h3>
@@ -204,41 +204,43 @@ function DirectvTiers() {
   const { s, t } = useStore();
   const [open, setOpen] = useState(false);
   return (
-    <section aria-labelledby="dtv-h" className="mt-10 overflow-hidden rounded-lg border border-tv">
-      <button type="button" aria-expanded={open} aria-controls="dtv-panel" onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-4 bg-tv-soft p-5 text-left sm:p-6">
-        <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-tv text-ink">
+    <section aria-labelledby="dtv-h" className="stage mt-10 overflow-hidden rounded-[24px]">
+      <button type="button" aria-expanded={open} aria-controls="dtv-panel" onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-4 p-5 text-left sm:p-6">
+        <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-tv text-white shadow-[0_14px_30px_-12px_var(--tv)]">
           <Tv className="size-6" strokeWidth={2.4} />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="text-xs font-semibold uppercase tracking-[0.1em] text-tv-text">{t("directvBadge")}</span>
-          <span id="dtv-h" className="block text-xl font-semibold text-ink">{t("addDirectv")}</span>
-          <span className="block text-sm text-muted">{t("directvIntro")}</span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-neon">{t("directvBadge")}</span>
+          <span id="dtv-h" className="block text-xl font-extrabold text-white">{t("addDirectv")}</span>
+          <span className="block text-sm text-on-dark-muted">{t("directvIntro")}</span>
         </span>
-        <ChevronDown aria-hidden className={clsx("size-6 shrink-0 text-tv-text transition-transform", open && "rotate-180")} />
+        <span className="glass flex size-11 shrink-0 items-center justify-center rounded-full">
+          <ChevronDown aria-hidden className={clsx("size-5 text-white transition-transform", open && "rotate-180")} />
+        </span>
       </button>
-      <div id="dtv-panel" hidden={!open} className="bg-surface p-5 sm:p-6">
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div id="dtv-panel" hidden={!open} className="px-5 pb-5 sm:px-6 sm:pb-6">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {DIRECTV_TIERS.map((tier, i) => {
             const c = Object.values(service)[i % 5];
             return (
-              <li key={tier.id} className="flex flex-col rounded-lg border border-line p-4">
-                <span aria-hidden className="mb-3 h-1.5 w-10 rounded-full" style={{ background: c.vivid }} />
-                <p className="text-lg font-semibold text-ink">{tier.name}</p>
-                <p className="text-sm font-bold" style={{ color: c.text }}>{t("channels", { n: tier.channels })}</p>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">{t("monthsRange", { n: tier.months })}</p>
-                    <p className="text-2xl font-semibold text-ink tabular">{money(tier.introCents).replace(".00", "")}</p>
+              <li key={tier.id} className="glass flex flex-col rounded-[20px] p-4">
+                <span aria-hidden className="mb-3 h-1.5 w-12 rounded-full" style={{ background: c.vivid }} />
+                <p className="text-lg font-extrabold text-white">{tier.name}</p>
+                <p className="text-sm font-bold text-on-dark-muted">{t("channels", { n: tier.channels })}</p>
+                <dl className="mt-3 space-y-1.5 rounded-2xl bg-white/5 p-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <dt className="text-[11px] font-bold uppercase tracking-wider text-on-dark-muted">{t("monthsRange", { n: tier.months })}</dt>
+                    <dd className="text-xl font-extrabold text-white tabular">{money(tier.introCents).replace(".00", "")}</dd>
                   </div>
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">{t("monthPlus", { n: tier.months + 1 })}</p>
-                    <p className="text-2xl font-semibold text-ink tabular">{money(tier.regularCents).replace(".00", "")}</p>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <dt className="text-[11px] font-bold uppercase tracking-wider text-on-dark-muted">{t("monthPlus", { n: tier.months + 1 })}</dt>
+                    <dd className="text-xl font-extrabold text-white tabular">{money(tier.regularCents).replace(".00", "")}</dd>
                   </div>
-                </div>
+                </dl>
                 <ul className="mt-3 space-y-1">
                   {tier.features.map((f) => (
-                    <li key={f.en} className="flex gap-1.5 text-xs text-ink">
-                      <Check aria-hidden className="mt-0.5 size-3.5 shrink-0 text-security-text" strokeWidth={3} />
+                    <li key={f.en} className="flex gap-1.5 text-xs text-white">
+                      <Check aria-hidden className="mt-0.5 size-3.5 shrink-0 text-security" strokeWidth={3} />
                       {f[s.lang]}
                     </li>
                   ))}
@@ -247,7 +249,7 @@ function DirectvTiers() {
             );
           })}
         </ul>
-        <p className="mt-4 text-xs text-muted">{t("directvNote")}</p>
+        <p className="mt-4 text-xs text-on-dark-muted">{t("directvNote")}</p>
       </div>
     </section>
   );

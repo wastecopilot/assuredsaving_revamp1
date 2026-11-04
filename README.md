@@ -12,16 +12,22 @@ A professional, enterprise-grade redesign of the Assured Saving one-pager (https
 
 Everything runs on mocked sample data (`data/sample.ts` and `data/catalog.ts`). Nothing calls a real service, places a call or sends a text. The research and the fix plan are in [`docs/audit.md`](docs/audit.md).
 
-## How this design differs from the bright one-pager revamp
+## Design direction: "Midnight Spectrum"
 
-| Area | Enterprise revamp |
+Built from the reference boards in `assuredsaving uiux refined` (color-blocked service tiles, dark neon hero, context chips, provider scan bars, colored plan headers, dark TV tier cards). It is deliberately different from the bright one-pager revamp, which uses a cream page with white cards.
+
+| Area | This build |
 | --- | --- |
-| Layout | A quote workspace: steps in the main column and a sticky **Your quote** summary on large screens that fills in as you go, with a callback button and Start over. |
-| Header | A navy utility bar (secure, US-only, ENG/ESP) above a white app bar with a step tracker on desktop and a "Step x of y" label with a progress bar on phones. |
-| Visual language | Geist type, a crisp azure primary (#135DF0) on cool gray canvas, navy accents, thin borders, 8 to 16px radii and subtle shadows. Service colors stay bright for recognition. |
-| Step 1 | Compact service rows with checkboxes and bundle options with radio indicators, in one selection panel with a footer action bar. |
-| Results | Top 3 picks as cards, then a real comparison `<table>` (caption, column and row headers) on tablet and desktop with all-in price, price after promo, contract and actions per row. Phones keep cards. |
-| Trust | Three trust cards (independent comparison, all-in pricing, quick answers). No invented ratings, stats or testimonials. |
+| Stage | Step 1, the live scan, the DIRECTV tiers and the footer sit on a deep midnight stage (#0A0E2E) with magenta, violet and cyan glows and a faint grid. The other steps are white cards on a light lavender work area. |
+| Color | Each service is a solid color block: Internet cyan, TV magenta, Mobile amber, Security lime, Home Phone royal blue. Actions use a magenta-to-violet gradient pill. Every text pair passes WCAG AA (`npm run contrast`). |
+| Type | Plus Jakarta Sans, extra bold headlines, a neon gradient on key phrases. |
+| Header | Midnight app bar with step pills on desktop (or "Step x of y" plus a progress bar on phones), then a row of context chips: name, address with the detected Business or Residential tag, services or bundle, plan count, "Get a call from Aria" and "Start over". |
+| Step 1 | The promise and three trust pills on the left. On the right, a glass panel with five solid service tiles and four bundle pills. |
+| Address | A night-skyline "Address found" card with a bold Business or Residential badge, detected from the address. |
+| Usage and TV | Usage tiles turn into solid color blocks when selected. Chips and yes/no choices are pills. |
+| Scan | Big gradient percentage, a gradient progress bar, a progress bar per provider, and a four-stage timeline. |
+| Results | Top 3 cards with a colored header band for the label each plan earned (lime Most Affordable, gradient Best Value, cyan Fastest, midnight otherwise). A comparison table with a midnight header row on wide screens, cards below 1280px. DIRECTV tiers in glass cards on the midnight stage. |
+| Trust | No invented ratings, stats, testimonials or "most popular" claims. |
 
 ## Run it
 

@@ -1,11 +1,9 @@
 "use client";
 import dynamic from "next/dynamic";
-import { LEGAL } from "@/data/catalog";
 import { StoreProvider, STAGE, useStore } from "@/lib/store";
 import { ToastProvider } from "@/components/ui/Toast";
-import { Glows, Header } from "@/components/sections/Shell";
+import { Footer, Header } from "@/components/sections/Shell";
 import { Hero } from "@/components/sections/Hero";
-import { SummaryPanel } from "@/components/sections/Summary";
 
 /*
  * Sections below the first step unlock one by one, so their code (and the
@@ -20,47 +18,28 @@ const DetailsDrawer = dynamic(() => import("@/components/sections/Details").then
 const CallbackModal = dynamic(() => import("@/components/sections/Callback").then((m) => m.CallbackModal), { ssr: false });
 
 /**
- * One page with the same steps, order and flow as the original one-pager,
- * laid out as a quote workspace: steps in the main column, a live
- * "Your quote" summary in a sticky sidebar on large screens.
+ * One page with the same steps, order and flow as the original one-pager.
+ * Step 1 sits on a full-width midnight stage; the later steps follow as
+ * white step cards on a light work area, with context chips in the header.
  */
 function OnePager() {
   const { s, t } = useStore();
   return (
     <ToastProvider closeLabel={t("close")}>
-      <Glows />
       <Header />
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 pt-6 sm:px-6 sm:pt-10 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <main className="min-w-0 space-y-8">
-          <Hero />
-          {s.stage >= STAGE.address && <AddressSection />}
-          {s.stage >= STAGE.usage && s.services.includes("internet") && <UsageSection />}
-          {s.stage >= STAGE.tv && s.services.includes("tv") && <TvSection />}
-          {s.stage >= STAGE.scan && !s.scanDone && <ScanSection />}
-          {s.scanDone && s.stage >= STAGE.results && <ResultsSection />}
-        </main>
-        <aside className="hidden lg:block" aria-label={t("yourQuote")}>
-          <div className="sticky top-32">
-            <SummaryPanel results={s.scanDone && s.resultsSummary ? s.resultsSummary : undefined} />
+      <main>
+        <Hero />
+        {s.stage >= STAGE.address && (
+          <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 sm:px-6 sm:pt-14">
+            {s.stage >= STAGE.address && <AddressSection />}
+            {s.stage >= STAGE.usage && s.services.includes("internet") && <UsageSection />}
+            {s.stage >= STAGE.tv && s.services.includes("tv") && <TvSection />}
+            {s.stage >= STAGE.scan && !s.scanDone && <ScanSection />}
+            {s.scanDone && s.stage >= STAGE.results && <ResultsSection />}
           </div>
-        </aside>
-      </div>
-      <footer className="border-t border-line bg-surface">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p>© {new Date().getFullYear()} Assured Saving · {t("previewTag")}</p>
-          <nav aria-label="Legal" className="flex flex-wrap gap-x-1">
-            {[
-              [t("cbTerms"), LEGAL.terms],
-              [t("cbPrivacy"), LEGAL.privacy],
-              [t("cbSmsTerms"), LEGAL.sms],
-            ].map(([label, href]) => (
-              <a key={href} href={href} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center rounded-md px-2 font-medium text-ink hover:text-primary">
-                {label}
-              </a>
-            ))}
-          </nav>
-        </div>
-      </footer>
+        )}
+      </main>
+      <Footer />
       {s.modal.kind === "details" && <DetailsDrawer />}
       {s.modal.kind === "callback" && <CallbackModal />}
     </ToastProvider>

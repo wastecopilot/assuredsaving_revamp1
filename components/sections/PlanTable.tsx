@@ -16,11 +16,11 @@ export function PlanTable({ plans, rankOf, labels, caption }: { plans: Plan[]; r
   const lang = s.lang;
   const open = (kind: "details" | "callback", id: string) => dispatch({ type: "patch", patch: { modal: { kind, planId: id } } });
   return (
-    <div className="overflow-hidden rounded-lg border border-line">
+    <div className="overflow-hidden rounded-[24px] border border-line bg-surface shadow-md">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] border-collapse text-left text-sm">
           <caption className="sr-only">{caption}</caption>
-          <thead className="bg-surface2 text-xs font-semibold text-muted">
+          <thead className="bg-navy text-xs font-bold uppercase tracking-wide text-on-dark-muted">
             <tr>
               <th scope="col" className="w-12 px-3 py-3">#</th>
               <th scope="col" className="px-3 py-3">{t("colPlan")}</th>
@@ -43,9 +43,9 @@ export function PlanTable({ plans, rankOf, labels, caption }: { plans: Plan[]; r
                 .join(" · ");
               return (
                 <tr key={p.id} className="bg-surface align-top transition-colors hover:bg-surface2/70">
-                  <td className="px-3 py-4 font-semibold text-muted tabular">{rankOf(p.id)}</td>
+                  <td className="px-3 py-4"><span className="bg-cta inline-flex size-8 items-center justify-center rounded-full text-xs font-extrabold text-white tabular">{rankOf(p.id)}</span></td>
                   <th scope="row" className="px-3 py-4 font-normal">
-                    <span className="block font-semibold text-ink">{p.provider}</span>
+                    <span className="block text-base font-extrabold text-ink">{p.provider}</span>
                     <span className="block text-muted">{p.name}</span>
                     <span className="mt-1.5 flex flex-wrap gap-1">
                       <Badge bg={c.soft} fg={c.text}>{techLabel(p, lang, s.addressType)}</Badge>
@@ -62,11 +62,11 @@ export function PlanTable({ plans, rankOf, labels, caption }: { plans: Plan[]; r
                   {isPriced(p) ? (
                     <>
                       <td className="px-3 py-4 text-right">
-                        <span className="block text-base font-semibold text-ink tabular">{money(allInNow(p))}</span>
+                        <span className="block text-lg font-extrabold text-ink tabular">{money(allInNow(p))}</span>
                         <span className="block text-xs text-muted">{p.pricing.promo ? t("firstMonths", { n: p.pricing.promo.months }) : t("everyMonth")}</span>
                       </td>
                       <td className="px-3 py-4 text-right">
-                        <span className="block text-base font-semibold text-ink tabular">{money(allInAfter(p))}</span>
+                        <span className="block text-lg font-extrabold text-ink tabular">{money(allInAfter(p))}</span>
                         <span className="block text-xs text-muted">{p.pricing.promo ? t("fromMonth", { n: p.pricing.promo.months + 1 }) : t("noPromo")}</span>
                       </td>
                     </>
@@ -81,7 +81,7 @@ export function PlanTable({ plans, rankOf, labels, caption }: { plans: Plan[]; r
                       <button
                         type="button"
                         onClick={() => open("details", p.id)}
-                        className="inline-flex min-h-11 items-center justify-center rounded-md border border-line-strong bg-surface px-3 text-sm font-semibold text-ink shadow-sm hover:border-primary hover:text-primary"
+                        className="inline-flex min-h-11 items-center justify-center rounded-full border-2 border-line-strong bg-surface px-4 text-sm font-bold text-ink hover:border-primary hover:text-primary"
                       >
                         {t("details")}
                         <span className="sr-only">: {p.provider} {p.name}</span>
@@ -89,7 +89,7 @@ export function PlanTable({ plans, rankOf, labels, caption }: { plans: Plan[]; r
                       <button
                         type="button"
                         onClick={() => open("callback", p.id)}
-                        className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-md bg-primary px-3 text-sm font-semibold text-white shadow-sm hover:bg-primary-strong"
+                        className="bg-cta inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-4 text-sm font-bold text-white shadow-glow hover:brightness-110"
                       >
                         {isPriced(p) ? t("getPlan") : t("getQuote")}
                         {isPriced(p) ? <ArrowRight aria-hidden className="size-4" /> : <PhoneCall aria-hidden className="size-4" />}

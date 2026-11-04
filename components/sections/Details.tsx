@@ -14,7 +14,7 @@ export function DetailsDrawer() {
   const close = () => dispatch({ type: "patch", patch: { modal: { kind: null, planId: s.modal.planId } } });
   const lang = s.lang;
   const Row = ({ k, v, strong, green }: { k: string; v: string; strong?: boolean; green?: boolean }) => (
-    <div className={`flex justify-between gap-4 py-2 ${strong ? "font-semibold text-ink" : ""}`}>
+    <div className={`flex justify-between gap-4 py-2 ${strong ? "font-bold text-ink" : ""}`}>
       <dt>{k}</dt>
       <dd className={`tabular ${green ? "font-bold text-success" : ""}`}>{v}</dd>
     </div>
@@ -25,7 +25,7 @@ export function DetailsDrawer() {
       open={!!plan}
       onClose={close}
       closeLabel={t("close")}
-      header={plan && <p className="mb-1 text-sm font-semibold uppercase tracking-[0.12em] text-primary">{plan.provider}</p>}
+      header={plan && <p className="mb-1 text-sm font-bold uppercase tracking-[0.12em] text-primary">{plan.provider}</p>}
       title={plan?.name ?? ""}
       footer={
         plan && (
@@ -46,18 +46,18 @@ export function DetailsDrawer() {
     >
       {plan && (
         <div className="space-y-7">
-          <section aria-labelledby="d-price" className="rounded-lg bg-surface2 p-5">
-            <h3 id="d-price" className="text-xs font-semibold uppercase tracking-[0.1em] text-primary">
+          <section aria-labelledby="d-price" className="rounded-[20px] bg-surface2 p-5">
+            <h3 id="d-price" className="text-xs font-bold uppercase tracking-[0.1em] text-primary">
               {t("monthlyPrice")}
             </h3>
             {isPriced(plan) ? (
               <>
-                <p className="mt-1 font-display text-[2rem] font-semibold tracking-tight text-ink tabular">
+                <p className="mt-1 text-[2rem] font-extrabold tracking-tight text-ink tabular">
                   {money(allInNow(plan))}
                   <span className="text-base text-muted">{t("perMo")}</span>
                 </p>
                 <p className="mt-1 text-xs text-muted">{t("allInNote")}</p>
-                <h4 className="mt-4 text-sm font-semibold text-ink">{t("feeBreakdown")}</h4>
+                <h4 className="mt-4 text-sm font-bold text-ink">{t("feeBreakdown")}</h4>
                 <dl className="mt-1 divide-y divide-line text-sm text-muted">
                   <Row k={t("planPrice")} v={money(plan.pricing.planCents)} />
                   {plan.pricing.fees.map((f) => (
@@ -84,7 +84,7 @@ export function DetailsDrawer() {
             ) : (
               plan.pricing.kind === "quote" && (
                 <>
-                  <p className="mt-1 font-display text-3xl font-semibold text-ink">{t("callForPricing")}</p>
+                  <p className="mt-1 text-3xl font-extrabold text-ink">{t("callForPricing")}</p>
                   <p className="mt-2 text-sm text-ink">{plan.pricing.reason[lang]}</p>
                 </>
               )
@@ -92,12 +92,12 @@ export function DetailsDrawer() {
           </section>
 
           <section aria-labelledby="d-why">
-            <h3 id="d-why" className="text-sm font-semibold text-ink">{t("whyThisPlan")}</h3>
+            <h3 id="d-why" className="text-sm font-bold text-ink">{t("whyThisPlan")}</h3>
             <p className="mt-1 text-base text-ink">{whyThisPlan(plan, lang, s.addressType)}</p>
           </section>
 
           <section aria-labelledby="d-specs">
-            <h3 id="d-specs" className="text-sm font-semibold text-ink">{t("specs")}</h3>
+            <h3 id="d-specs" className="text-sm font-bold text-ink">{t("specs")}</h3>
             <dl className="mt-2 grid grid-cols-2 gap-3">
               {[
                 speedText(plan, lang) && [t("download"), speedText(plan, lang)!],
@@ -109,16 +109,16 @@ export function DetailsDrawer() {
               ]
                 .filter((x): x is string[] => Array.isArray(x))
                 .map(([k, v]) => (
-                  <div key={k} className="rounded-md border border-line p-3">
-                    <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted">{k}</dt>
+                  <div key={k} className="rounded-2xl border border-line p-3">
+                    <dt className="text-[11px] font-bold uppercase tracking-wider text-muted">{k}</dt>
                     <dd className="text-sm font-bold text-ink">{v}</dd>
                   </div>
                 ))}
             </dl>
           </section>
 
-          <section aria-labelledby="d-tech" className="rounded-lg p-4" style={{ background: service[plan.services[0]].soft }}>
-            <h3 id="d-tech" className="flex items-center gap-2 text-sm font-semibold text-ink">
+          <section aria-labelledby="d-tech" className="rounded-[20px] p-4" style={{ background: service[plan.services[0]].soft }}>
+            <h3 id="d-tech" className="flex items-center gap-2 text-sm font-bold text-ink">
               <Info aria-hidden className="size-4" style={{ color: service[plan.services[0]].text }} />
               {t("techNote", { tech: techLabel(plan, lang, s.addressType) })}
             </h3>
@@ -126,7 +126,7 @@ export function DetailsDrawer() {
           </section>
 
           <section aria-labelledby="d-inc">
-            <h3 id="d-inc" className="text-sm font-semibold text-ink">{t("whatIncluded")}</h3>
+            <h3 id="d-inc" className="text-sm font-bold text-ink">{t("whatIncluded")}</h3>
             <ul className="mt-2 space-y-2">
               {plan.includes.map((i) => (
                 <li key={i.en} className="flex gap-2 text-sm text-ink">
@@ -139,7 +139,7 @@ export function DetailsDrawer() {
 
           {s.addressType === "business" && plan.business && (
             <section aria-labelledby="d-biz">
-              <h3 id="d-biz" className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <h3 id="d-biz" className="flex items-center gap-2 text-sm font-bold text-ink">
                 <Building2 aria-hidden className="size-4 text-primary" />
                 {t("forBusiness")}
               </h3>

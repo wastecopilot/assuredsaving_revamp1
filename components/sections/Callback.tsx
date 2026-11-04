@@ -154,7 +154,7 @@ export function CallbackModal() {
       <ol className="mb-3 flex items-center gap-1.5" aria-label={`${idx + 1} / 4`}>
         {FLOW.map((x, i) => (
           <li key={x} className="flex items-center gap-1.5" aria-current={i === idx ? "step" : undefined}>
-            <span className={clsx("flex size-6 items-center justify-center rounded-full text-[11px] font-semibold", i < idx ? "bg-primary text-white" : i === idx ? "bg-primary-soft text-primary ring-2 ring-primary" : "bg-surface2 text-muted")}>{i + 1}</span>
+            <span className={clsx("flex size-6 items-center justify-center rounded-full text-[11px] font-bold", i < idx ? "bg-primary text-white" : i === idx ? "bg-primary-soft text-primary ring-2 ring-primary" : "bg-surface2 text-muted")}>{i + 1}</span>
             <span className={clsx("text-xs font-bold", i === idx ? "text-ink" : "sr-only sm:not-sr-only sm:text-muted")}>{stepLabels[i]}</span>
             {i < 3 && <span aria-hidden className="h-0.5 w-3 rounded bg-line-strong sm:w-5" />}
           </li>
@@ -211,7 +211,7 @@ export function CallbackModal() {
             <Bot aria-hidden className="mt-0.5 size-4 shrink-0 text-primary" />
             <span>
               {t("cbAi")}
-              {plan && <span className="mt-1 block font-semibold text-ink">{t("cbAbout", { plan: `${plan.provider} ${plan.name}` })}</span>}
+              {plan && <span className="mt-1 block font-bold text-ink">{t("cbAbout", { plan: `${plan.provider} ${plan.name}` })}</span>}
             </span>
           </span>
         ) : undefined
@@ -224,13 +224,13 @@ export function CallbackModal() {
           <Input id="cb-email" type="email" label={t("cbEmail")} autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} error={err.email} hint={t("cbEmailHint")} icon={<Mail aria-hidden className="size-5" />} />
           <Input id="cb-phone" type="tel" inputMode="tel" label={t("cbPhone")} autoComplete="tel-national" placeholder="(555) 201-4477" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} error={err.phone} hint={t("cbPhoneHint")} icon={<Smartphone aria-hidden className="size-5" />} />
           <button type="submit" hidden />
-          <p className="rounded-md bg-phone-soft px-3 py-2 text-xs font-medium text-ink">{t("cbDemoHints")}</p>
+          <p className="rounded-2xl bg-phone-soft px-3 py-2 text-xs font-medium text-ink">{t("cbDemoHints")}</p>
         </form>
       )}
 
       {step === "consent" && (
         <div className="space-y-4">
-          <p className="flex gap-2 rounded-md bg-surface2 p-4 text-sm text-ink">
+          <p className="flex gap-2 rounded-2xl bg-surface2 p-4 text-sm text-ink">
             <ShieldCheck aria-hidden className="mt-0.5 size-5 shrink-0 text-security-text" />
             {t("cbConsentWhat", { phone: shown })}
           </p>
@@ -256,7 +256,7 @@ export function CallbackModal() {
         <div className="space-y-5">
           <p className="text-sm text-ink">{t("cbCodeSent", { phone: shown })}</p>
           <fieldset>
-            <legend className="mb-3 text-sm font-semibold text-ink">{t("cbCode")}</legend>
+            <legend className="mb-3 text-sm font-bold text-ink">{t("cbCode")}</legend>
             <div className="grid grid-cols-6 gap-2" onPaste={onPaste}>
               {code.map((d, i) => (
                 <input
@@ -272,7 +272,7 @@ export function CallbackModal() {
                   onKeyDown={(e) => onCodeKey(i, e)}
                   aria-invalid={codeErr ? true : undefined}
                   aria-describedby={codeErr ? "cb-code-err" : undefined}
-                  className={clsx("h-14 w-full min-w-0 rounded-md border bg-surface text-center font-display text-2xl font-semibold text-ink focus:border-primary focus:outline-none", codeErr ? "border-danger" : "border-line-strong")}
+                  className={clsx("h-14 w-full min-w-0 rounded-2xl border bg-surface text-center text-2xl font-extrabold text-ink focus:border-primary focus:outline-none", codeErr ? "border-danger" : "border-line-strong")}
                 />
               ))}
             </div>
@@ -286,7 +286,7 @@ export function CallbackModal() {
             )}
             <button type="button" className="min-h-11 font-bold text-ink underline underline-offset-2" onClick={() => setStep("details")}>{t("cbWrong")}</button>
           </div>
-          {note && <p role="status" className="text-sm font-semibold text-success">{note}</p>}
+          {note && <p role="status" className="text-sm font-bold text-success">{note}</p>}
         </div>
       )}
 
@@ -303,16 +303,16 @@ export function CallbackModal() {
             ]}
           />
           <Select label={t("cbTz")} value={zone} onChange={(e) => { setZone(e.target.value); setDay(""); setSlot(""); }} options={TIME_ZONES.map((z) => ({ value: z.id, label: z[s.lang] }))} />
-          <p className="flex gap-2 rounded-md bg-surface2 p-3 text-sm text-ink">
+          <p className="flex gap-2 rounded-2xl bg-surface2 p-3 text-sm text-ink">
             <Clock aria-hidden className="mt-0.5 size-4 shrink-0 text-primary" />
             {t("cbHours")}
           </p>
           {mode === "now" ? (
-            <p className={clsx("rounded-md p-4 text-sm font-semibold text-ink", inHours ? "bg-security-soft" : "bg-phone-soft")}>{inHours ? t("cbNowOk") : t("cbNowLater", { when: nextWindow })}</p>
+            <p className={clsx("rounded-2xl p-4 text-sm font-bold text-ink", inHours ? "bg-security-soft" : "bg-phone-soft")}>{inHours ? t("cbNowOk") : t("cbNowLater", { when: nextWindow })}</p>
           ) : (
             <div className="space-y-4">
               <fieldset>
-                <legend className="mb-2 text-sm font-semibold text-ink">{t("cbDay")}</legend>
+                <legend className="mb-2 text-sm font-bold text-ink">{t("cbDay")}</legend>
                 <div className="flex flex-wrap gap-2">
                   {days.map((d) => (
                     <button key={d.key} type="button" aria-pressed={activeDay?.key === d.key} onClick={() => { setDay(d.key); setSlot(""); }} className={clsx("min-h-11 rounded-full border px-4 text-sm font-bold transition-colors", activeDay?.key === d.key ? "border-primary bg-primary-soft text-primary" : "border-line text-ink hover:border-line-strong")}>
@@ -323,10 +323,10 @@ export function CallbackModal() {
               </fieldset>
               {activeDay && (
                 <fieldset>
-                  <legend className="mb-2 text-sm font-semibold text-ink">{t("cbTime")} · {zoneLabel}</legend>
+                  <legend className="mb-2 text-sm font-bold text-ink">{t("cbTime")} · {zoneLabel}</legend>
                   <div role="radiogroup" aria-label={t("cbTime")} className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                     {activeDay.slots.map((x) => (
-                      <button key={x.key} type="button" role="radio" aria-checked={slot === x.key} onClick={() => { setSlot(x.key); setSlotErr(null); }} className={clsx("min-h-11 rounded-md border text-sm font-bold tabular transition-colors", slot === x.key ? "border-transparent bg-brand text-white" : "border-line text-ink hover:border-line-strong")}>
+                      <button key={x.key} type="button" role="radio" aria-checked={slot === x.key} onClick={() => { setSlot(x.key); setSlotErr(null); }} className={clsx("min-h-11 rounded-2xl border text-sm font-bold tabular transition-colors", slot === x.key ? "border-transparent bg-brand text-white" : "border-line text-ink hover:border-line-strong")}>
                         {x.label}
                       </button>
                     ))}
@@ -342,15 +342,15 @@ export function CallbackModal() {
       {step === "done" && (
         <div className="py-2 text-center">
           <CheckCircle2 aria-hidden className="mx-auto size-14 text-security" />
-          <p className="mt-4 font-display text-xl font-semibold text-ink">{result}</p>
+          <p className="mt-4 text-xl font-extrabold text-ink">{result}</p>
           <p className="mt-2 text-sm text-muted">{t("cbDoneBody")}</p>
-          <p className="mt-4 rounded-md bg-surface2 px-3 py-2 text-xs text-muted">{t("cbDemo")}</p>
+          <p className="mt-4 rounded-2xl bg-surface2 px-3 py-2 text-xs text-muted">{t("cbDemo")}</p>
         </div>
       )}
 
       {step === "dnc" && (
         <div className="space-y-4">
-          <p className="flex gap-3 rounded-md border border-phone bg-phone-soft p-4 text-sm text-ink">
+          <p className="flex gap-3 rounded-2xl border border-phone bg-phone-soft p-4 text-sm text-ink">
             <AlertTriangle aria-hidden className="mt-0.5 size-5 shrink-0 text-phone-text" />
             {t("cbDncBody", { phone: shown })}
           </p>

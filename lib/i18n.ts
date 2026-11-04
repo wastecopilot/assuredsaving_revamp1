@@ -2,6 +2,17 @@
 export type Lang = "en" | "es";
 
 const en = {
+  plansCount: "{n} plans",
+  unbiasedTitle: "Unbiased, factual and transparent.",
+  unbiasedBody: "Enter your address and we'll show the best provider and plan for you, with every required fee in the price.",
+  heroKicker: "US internet, TV and mobile comparison",
+  tapToSelect: "Tap to select",
+  selectedTag: "Selected",
+  ctxBundle: "Bundle",
+  ctxSingle: "Single service",
+  ctxLabel: "Your details so far",
+  footerNote: "Assured Saving compares plans from US providers. Prices on this page are sample data for the design preview.",
+  stepWord: "Step",
   colPlan: "Plan",
   colIncludes: "Includes",
   colAllIn: "All-in monthly",
@@ -318,6 +329,17 @@ const en = {
 export type Key = keyof typeof en;
 
 const es: Record<Key, string> = {
+  plansCount: "{n} planes",
+  unbiasedTitle: "Imparcial, objetivo y transparente.",
+  unbiasedBody: "Ingresa tu dirección y te mostramos el mejor proveedor y plan para ti, con todos los cargos obligatorios en el precio.",
+  heroKicker: "Comparador de internet, TV y móvil en EE. UU.",
+  tapToSelect: "Toca para elegir",
+  selectedTag: "Elegido",
+  ctxBundle: "Paquete",
+  ctxSingle: "Servicio individual",
+  ctxLabel: "Tus datos hasta ahora",
+  footerNote: "Assured Saving compara planes de proveedores de EE. UU. Los precios de esta página son datos de muestra para la vista previa del diseño.",
+  stepWord: "Paso",
   colPlan: "Plan",
   colIncludes: "Incluye",
   colAllIn: "Total mensual",

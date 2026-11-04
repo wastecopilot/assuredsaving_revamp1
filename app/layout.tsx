@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { cssVariables } from "@/lib/tokens";
 import "./globals.css";
 
-/* One professional family for UI and display, with tabular figures for prices. */
-const geist = Geist({ subsets: ["latin"], variable: "--font-body", display: "swap" });
+/* One geometric family for UI and display, with tabular figures for prices. */
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-body", display: "swap" });
 
 const title = "Assured Saving | Compare internet, TV and mobile plans with all-in pricing";
 const description =
@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title, description },
 };
 
-export const viewport: Viewport = { themeColor: "#FFFFFF", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#0A0E2E", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={geist.variable}>
+    <html lang="en" className={jakarta.variable}>
       <head>
         <style dangerouslySetInnerHTML={{ __html: `${cssVariables()}:root{--font-heading:var(--font-body)}` }} />
       </head>

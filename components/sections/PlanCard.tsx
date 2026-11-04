@@ -9,10 +9,10 @@ import { useStore } from "@/lib/store";
 import { service } from "@/lib/tokens";
 import { Badge, Button } from "../ui";
 
-export const LABEL_STYLE: Record<Label, { bg: string; fg: string; icon: typeof Tag }> = {
-  mostAffordable: { bg: service.security.vivid, fg: service.security.on, icon: Tag },
-  bestValue: { bg: service.phone.vivid, fg: service.phone.on, icon: Sparkles },
-  fastest: { bg: service.internet.vivid, fg: service.internet.on, icon: Zap },
+export const LABEL_STYLE: Record<Label, { bg: string; fg: string; icon: typeof Tag; band: string }> = {
+  mostAffordable: { bg: service.security.vivid, fg: service.security.on, icon: Tag, band: service.security.vivid },
+  bestValue: { bg: "#D3136C", fg: "#FFFFFF", icon: Sparkles, band: "linear-gradient(110deg,#D3136C,#9B21B5 55%,#5B2EE8)" },
+  fastest: { bg: service.internet.vivid, fg: service.internet.on, icon: Zap, band: service.internet.vivid },
 };
 
 /** Count-up for the headline price (instant with reduced motion). */
@@ -41,7 +41,7 @@ function Price({ label, cents, animate }: { label: string; cents: number; animat
   return (
     <div className="min-w-0">
       <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</p>
-      <p className="mt-0.5 flex items-baseline gap-0.5 font-display text-[1.625rem] font-semibold leading-none tracking-tight text-ink tabular min-[420px]:text-[1.75rem] sm:text-[2rem]">
+      <p className="mt-0.5 flex items-baseline gap-0.5 text-[1.625rem] font-extrabold leading-none tracking-tight text-ink tabular min-[420px]:text-[1.75rem] sm:text-[2rem]">
         {money(animate ? v : cents)}
         <span className="text-xs font-bold text-muted sm:text-sm">{t("perMo")}</span>
       </p>
@@ -56,40 +56,44 @@ export function PlanCard({ plan, rank, labels, featured }: { plan: Plan; rank: n
   const accent = service[plan.services[0]];
   const save = savings(plan, s.billCents);
   const open = (kind: "details" | "callback") => dispatch({ type: "patch", patch: { modal: { kind, planId: plan.id } } });
-  const highlight = labels[0] ? LABEL_STYLE[labels[0]].bg : null;
+  const top = labels[0] ? LABEL_STYLE[labels[0]] : null;
+  const bandFg = top ? top.fg : "#FFFFFF";
 
   return (
     <article
       data-plan-card
       aria-labelledby={`p-${plan.id}`}
-      className={clsx("flex h-full flex-col overflow-hidden rounded-lg border bg-surface shadow-sm transition-shadow hover:shadow-md", !highlight && "border-line")}
-      style={highlight ? { borderColor: highlight } : undefined}
+      className={clsx("flex h-full flex-col overflow-hidden rounded-[24px] border bg-surface shadow-md transition-[box-shadow,transform] hover:-translate-y-0.5", top ? "border-transparent" : "border-line")}
     >
-      <div aria-hidden className="flex h-2">
-        {plan.services.map((x) => (
-          <span key={x} className="flex-1" style={{ background: service[x].vivid }} />
-        ))}
-      </div>
-      <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-ink px-2 font-display text-sm font-semibold text-white" aria-label={`Rank ${rank}`}>
+      {/* Header band: coloured by the label the plan earned, midnight otherwise */}
+      <div className={clsx("relative overflow-hidden px-5 pb-5 pt-4 sm:px-6", !top && "bg-navy")} style={top ? { background: top.band, color: bandFg } : { color: bandFg }}>
+        <span aria-hidden className="pointer-events-none absolute -right-8 -top-10 size-32 rounded-full bg-white/15" />
+        <div className="relative flex flex-wrap items-center gap-2">
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-white px-2 text-xs font-extrabold text-ink" aria-label={`Rank ${rank}`}>
             #{rank}
           </span>
           {labels.map((l) => {
             const st = LABEL_STYLE[l];
             return (
-              <Badge key={l} bg={st.bg} fg={st.fg} icon={<st.icon aria-hidden className="size-3.5" strokeWidth={3} />}>
+              <span key={l} className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-xs font-extrabold uppercase tracking-wide text-ink">
+                <st.icon aria-hidden className="size-3.5" strokeWidth={3} />
                 {t(`label_${l}`)}
-              </Badge>
+              </span>
             );
           })}
-          <Badge bg={accent.soft} fg={accent.text}>{techLabel(plan, lang, s.addressType)}</Badge>
+          <span aria-hidden className="ml-auto flex -space-x-1.5">
+            {plan.services.map((x) => (
+              <span key={x} className="size-4 rounded-full ring-2 ring-white/70" style={{ background: service[x].vivid }} />
+            ))}
+          </span>
         </div>
-
-        <p className="mt-4 font-display text-2xl font-semibold text-ink">{plan.provider}</p>
-        <h3 id={`p-${plan.id}`} className={clsx("text-base font-semibold text-muted", featured && "min-h-12")}>
+        <p className="relative mt-3 text-2xl font-extrabold tracking-tight">{plan.provider}</p>
+        <h3 id={`p-${plan.id}`} className={clsx("relative text-sm font-bold", featured && "min-h-10")}>
           {plan.name}
         </h3>
+      </div>
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
+        <Badge bg={accent.soft} fg={accent.text} className="self-start">{techLabel(plan, lang, s.addressType)}</Badge>
 
         <dl className="mt-4 flex flex-wrap gap-x-5 gap-y-3">
           {speed && <Spec icon={<Gauge aria-hidden className="size-3.5" />} k={t("download")} v={speed} />}
@@ -100,10 +104,10 @@ export function PlanCard({ plan, rank, labels, featured }: { plan: Plan; rank: n
         </dl>
 
         {/* Price: the intro price and the price after it are the same size */}
-        <div className="mt-5 rounded-lg p-4" style={{ background: isPriced(plan) ? "var(--surface2)" : "var(--phone-soft)" }}>
+        <div className="mt-5 rounded-[20px] border border-line p-4" style={{ background: isPriced(plan) ? "var(--surface2)" : "var(--mobile-soft)" }}>
           {isPriced(plan) ? (
             <>
-              <p className="text-xs font-semibold uppercase tracking-[0.1em] text-primary">{t("allInMonthly")}</p>
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-magenta">{t("allInMonthly")}</p>
               {plan.pricing.promo ? (
                 <div className={clsx("mt-2 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2", featured && "lg:grid-cols-1 lg:gap-2")}>
                   <Price label={plan.pricing.promo.months === 1 ? t("firstMonth") : t("firstMonths", { n: plan.pricing.promo.months })} cents={allInNow(plan)} animate />
@@ -126,8 +130,8 @@ export function PlanCard({ plan, rank, labels, featured }: { plan: Plan; rank: n
           ) : (
             plan.pricing.kind === "quote" && (
               <>
-                <p className="font-display text-2xl font-semibold text-ink">{t("callForPricing")}</p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-phone-text">{t("quoteWhy")}</p>
+                <p className="text-2xl font-extrabold text-ink">{t("callForPricing")}</p>
+                <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-mobile-text">{t("quoteWhy")}</p>
                 <p className="mt-1 text-sm text-ink">{plan.pricing.reason[lang]}</p>
               </>
             )
