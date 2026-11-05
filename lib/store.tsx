@@ -6,6 +6,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, type ReactNode } from "react";
 import { DEVICES, type AddressType, type SampleAddress, type ServiceId } from "@/data/catalog";
 import { translate, type Key, type Lang } from "./i18n";
+import { toggleService } from "./selection";
 
 export const STAGE = { intent: 0, address: 1, usage: 2, tv: 3, scan: 4, results: 5 } as const;
 export type StageName = keyof typeof STAGE;
@@ -80,8 +81,8 @@ function reducer(s: State, a: Action): State {
     case "patch":
       return { ...s, ...a.patch };
     case "toggleService": {
-      const services = s.services.includes(a.s) ? s.services.filter((x) => x !== a.s) : [...s.services, a.s];
-      return { ...s, services, carrier: "ALL" };
+      // Official rules: see lib/selection.ts
+      return { ...s, services: toggleService(s.services, a.s), carrier: "ALL" };
     }
     case "setServices":
       return { ...s, services: a.s, carrier: "ALL" };
@@ -105,7 +106,7 @@ interface Ctx {
   dispatch: (a: Action) => void;
   t: (k: Key, vars?: Record<string, string | number>) => string;
   /** Unlock the next applicable section and scroll to it. */
-  goNext: (from: number) => void;
+  goNext: (from: number, changes?: Partial<State>) => void;
   scrollTo: (stage: StageName) => void;
 }
 const C = createContext<Ctx | null>(null);
@@ -132,14 +133,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return;
       }
       el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-      // Move keyboard focus to the new section's heading.
-      window.setTimeout(() => el.querySelector<HTMLElement>("h2[tabindex='-1'], h1[tabindex='-1']")?.focus({ preventScroll: true }), reduce ? 0 : 450);
+      // Move keyboard focus to the new section's heading, unless the visitor is
+      // already typing in a field (never steal focus mid-word).
+      window.setTimeout(() => {
+        const a = document.activeElement;
+        if (a instanceof HTMLInputElement || a instanceof HTMLTextAreaElement || a instanceof HTMLSelectElement) return;
+        el.querySelector<HTMLElement>("h2[tabindex='-1'], h1[tabindex='-1']")?.focus({ preventScroll: true });
+      }, reduce ? 0 : 450);
     };
     attempt();
   }, []);
 
-  const goNext = useCallback((from: number) => {
-    const to = nextStage(ref.current, from);
+  const goNext = useCallback((from: number, changes?: Partial<State>) => {
+    // `changes` = state dispatched in the same handler that this render hasn't seen yet
+    // (e.g. the business chooser setting services), so the next step is computed from it.
+    const to = nextStage({ ...ref.current, ...changes }, from);
     dispatch({ type: "advance", to });
     pending.current = STAGE_NAMES[to];
   }, []);

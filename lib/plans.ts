@@ -3,8 +3,8 @@
  * from the plan's own data, so they can never contradict each other.
  * Verified by scripts/verify-data.ts.
  */
-import { BUNDLE_PRESETS, PLANS, SERVICE_ORDER, type AddressType, type Plan, type ServiceId, type Tech, type Text } from "@/data/sample";
-import type { Lang } from "./i18n";
+import { BUNDLE_PRESETS, PLANS, SERVICE_ORDER, type Plan, type ServiceId, type Tech } from "@/data/sample";
+import { translate, type Key, type Lang } from "./i18n";
 
 type Priced = Plan & { pricing: Extract<Plan["pricing"], { kind: "priced" }> };
 export const isPriced = (p: Plan): p is Priced => p.pricing.kind === "priced";
@@ -90,121 +90,63 @@ export function labelsFor(plans: Plan[]): Map<string, Label[]> {
 }
 
 /* ------------------------------ Display ------------------------------ */
-/** Lower-cases only the first letter, so acronyms like "IP" stay intact. */
-const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 export const money = (cents: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format(cents / 100);
-const n = (v: number, lang: Lang) => new Intl.NumberFormat(lang === "es" ? "es-US" : "en-US").format(v);
+const num = (v: number, lang: Lang) => new Intl.NumberFormat(lang === "es" ? "es-US" : "en-US").format(v);
 
 export function speedText(p: Plan, lang: Lang): string | null {
   if (!p.downloadMbps) return null;
-  if (p.downloadMinMbps) return `${n(p.downloadMinMbps, lang)}–${n(p.downloadMbps, lang)} Mbps`;
-  return p.downloadMbps >= 1000 ? `${n(p.downloadMbps / 1000, lang)} Gbps` : `${n(p.downloadMbps, lang)} Mbps`;
+  if (p.downloadMinMbps) return `${num(p.downloadMinMbps, lang)}–${num(p.downloadMbps, lang)} Mbps`;
+  return p.downloadMbps >= 1000 ? `${num(p.downloadMbps / 1000, lang)} Gbps` : `${num(p.downloadMbps, lang)} Mbps`;
 }
 
-/** Technology name, worded for the address type (5G is not "home" for a business). */
-export const techLabel = (p: Plan, lang: Lang, type: AddressType = "residential") =>
-  p.tech === "fiveG" && type === "business" ? (lang === "es" ? "5G fijo" : "5G fixed wireless") : TECH[p.tech].label[lang];
-
-export const TECH: Record<Tech, { label: Text; note: Text }> = {
-  fiber: {
-    label: { en: "Fiber", es: "Fibra" },
-    note: { en: "Light over glass to your door. Uploads close to download speed, low lag and steady at busy times.", es: "Luz por fibra hasta tu puerta. Subida cercana a la bajada, poca latencia y estable en horas pico." },
-  },
-  cable: {
-    label: { en: "Cable", es: "Cable" },
-    note: { en: "Uses the coax lines from cable TV. Fast downloads, much slower uploads, and speeds can dip when neighbors are busy online.", es: "Usa las líneas coaxiales de la TV por cable. Bajada rápida, subida mucho más lenta y puede bajar cuando los vecinos usan mucho internet." },
-  },
-  fiveG: {
-    label: { en: "5G Home", es: "5G Hogar" },
-    note: { en: "Wireless from a nearby cell tower. No install visit, but speed depends on signal at your address and changes during the day.", es: "Inalámbrico desde una antena cercana. Sin visita de instalación, pero la velocidad depende de la señal en tu dirección y cambia durante el día." },
-  },
-  dsl: {
-    label: { en: "DSL", es: "DSL" },
-    note: { en: "Runs over phone lines. Widely available, but slower, and speed drops the farther you are from the provider's equipment.", es: "Funciona por líneas telefónicas. Muy disponible, pero más lento, y baja con la distancia al equipo del proveedor." },
-  },
-  satellite: {
-    label: { en: "Satellite", es: "Satélite" },
-    note: { en: "Works almost anywhere with a clear view of the sky. Signals travel to space and back, so lag is high (around 600 ms) and heavy rain or snow can interrupt service.", es: "Funciona casi en cualquier lugar con vista despejada del cielo. La señal va al espacio y vuelve, así que la latencia es alta (unos 600 ms) y la lluvia o nieve fuerte puede cortar el servicio." },
-  },
-  streaming: {
-    label: { en: "Streaming TV", es: "TV por streaming" },
-    note: { en: "Live TV over your internet. No box or install, and it needs a steady connection.", es: "TV en vivo por tu internet. Sin decodificador ni instalación, y necesita una conexión estable." },
-  },
-  wireless: {
-    label: { en: "5G mobile", es: "Móvil 5G" },
-    note: { en: "Phone service on a national 5G network.", es: "Servicio móvil en una red 5G nacional." },
-  },
-  monitored: {
-    label: { en: "Monitored security", es: "Seguridad monitoreada" },
-    note: { en: "A monitoring team responds to alarms around the clock.", es: "Un equipo de monitoreo responde a las alarmas a toda hora." },
-  },
-  voip: {
-    label: { en: "Internet phone", es: "Teléfono por internet" },
-    note: { en: "Calls run over your internet, so they stop if the internet goes down.", es: "Las llamadas usan tu internet, así que se detienen si se cae el internet." },
-  },
-  landline: {
-    label: { en: "Copper landline", es: "Línea de cobre" },
-    note: { en: "A traditional phone line that keeps working in a power outage.", es: "Una línea tradicional que sigue funcionando sin electricidad." },
-  },
+/** Official technology words (lib/i18n.ts). */
+export const TECH_KEY: Record<Tech, Key> = {
+  fiber: "tech_fiber",
+  cable: "tech_cable",
+  fiveG: "tech_fiveG",
+  dsl: "tech_dsl",
+  satellite: "tech_satellite",
+  streaming: "tech_streaming",
+  wireless: "tech_wireless",
+  monitored: "tech_monitored",
+  voip: "tech_voip",
+  landline: "tech_landline",
 };
+export const techLabel = (p: Plan, lang: Lang) => translate(lang, TECH_KEY[p.tech]);
+
+/** Official "Best For" by technology (internet plans only). */
+export function bestFor(p: Plan, lang: Lang): string | null {
+  if (!p.services.includes("internet")) return null;
+  const k: Key = p.tech === "fiber" ? "bestForFiber" : p.tech === "cable" ? "bestForCable" : p.tech === "fiveG" ? "bestFor5g" : "bestForOther";
+  return translate(lang, k);
+}
 
 /**
- * One plain sentence from the plan's own fields, worded for home or business.
- * It never mentions a number that isn't on the card.
+ * "Why This Plan" reasons, built only from the official sentence templates and
+ * the plan's own numbers, compared with the top match.
  */
-export function whyThisPlan(p: Plan, lang: Lang, type: AddressType): string {
-  const es = lang === "es";
-  const biz = type === "business";
-  const parts: string[] = [];
+export function planReasons(p: Plan, top: Plan | undefined, lang: Lang): string[] {
+  const t = (k: Key, v?: Record<string, string | number>) => translate(lang, k, v);
   const speed = speedText(p, lang);
-  const tech = techLabel(p, lang, type);
-  if (speed) {
-    const low = p.downloadMinMbps ?? p.downloadMbps ?? 0;
-    const fit = biz
-      ? low >= 500
-        ? es ? "suficiente para un equipo completo con nube y videollamadas" : "enough for a full team on cloud apps and video meetings"
-        : low >= 200
-          ? es ? "cómodo para una oficina con videollamadas" : "comfortable for an office running video meetings"
-          : es ? "suficiente para correo, pagos con tarjeta y navegación" : "enough for email, card payments and browsing"
-      : low >= 500
-        ? es ? "suficiente para muchos dispositivos y streaming 4K a la vez" : "enough for many devices and 4K streaming at once"
-        : low >= 200
-          ? es ? "cómodo para varias personas con video y videollamadas" : "comfortable for several people streaming and on video calls"
-          : es ? "bien para navegar, correo y streaming HD" : "fine for browsing, email and HD streaming";
-    parts.push(es ? `${tech} de ${speed}, ${fit}` : `${speed} ${tech.toLowerCase().replace("5g", "5G")}, ${fit}`);
-    if (p.uploadMbps && p.downloadMbps && p.uploadMbps >= p.downloadMbps * 0.8) parts.push(es ? "con subida igual de rápida" : "with uploads just as fast");
-  } else {
-    parts.push(tech);
+  const tech = techLabel(p, lang);
+  const out: string[] = [];
+  if (!top || top.id === p.id) {
+    if (speed) out.push(t("reasonSuitsMost", { speed }));
+    return out;
   }
-  if (p.channels) parts.push(es ? `${p.channels}+ canales` : `${p.channels}+ channels`);
-  if (p.lines) parts.push(es ? `${p.lines} línea móvil` : `${p.lines} mobile line`);
-  if (p.services.includes("phone")) parts.push(es ? (biz ? "una línea de negocio" : "un teléfono fijo") : biz ? "a business phone line" : "a home phone line");
-  if (biz && p.business) parts.push(lowerFirst(p.business.staticIp[lang]));
-  let s = parts.join(", ");
-  s = `${s.charAt(0).toUpperCase()}${s.slice(1)}.`;
-
-  if (isPriced(p)) {
-    const now = money(allInNow(p));
-    const promo = p.pricing.promo;
-    s += promo
-      ? es
-        ? ` ${now}/mes con todo incluido por ${promo.months} ${promo.months === 1 ? "mes" : "meses"}, luego ${money(allInAfter(p))}.`
-        : ` ${now}/mo all-in for ${promo.months} ${promo.months === 1 ? "month" : "months"}, then ${money(allInAfter(p))}.`
-      : es
-        ? ` ${now}/mes con todo incluido, sin promoción que venza.`
-        : ` ${now}/mo all-in with no promo to expire.`;
-  } else {
-    s += es ? " El precio se confirma por teléfono." : " Price is confirmed by phone.";
+  out.push(
+    p.tech !== top.tech
+      ? t("reasonDifferentTech", { provider: p.provider, tech, topProvider: top.provider, topTech: techLabel(top, lang) })
+      : t("reasonAlsoDelivers", { provider: p.provider, tech }),
+  );
+  if (isPriced(p) && isPriced(top)) {
+    const price = `${money(allInNow(p))}${t("perMo")}`;
+    const delta = allInNow(top) - allInNow(p);
+    if (delta > 0) out.push(t("reasonCheaperThanTop", { price, delta: (delta / 100).toFixed(2), topProvider: top.provider, annual: Math.round((delta * 12) / 100) }));
+    else if (delta === 0) out.push(t("reasonMatchesTop", { topProvider: top.provider, price }));
+    else if (speed) out.push(t("reasonMoreExpensive", { price, speed }));
   }
-  if (p.dataCapGB) s += es ? ` Incluye ${n(p.dataCapGB, lang)} GB de datos al mes.` : ` Includes ${n(p.dataCapGB, lang)} GB of data a month.`;
-  s += p.contractMonths ? (es ? ` Contrato de ${p.contractMonths} meses.` : ` ${p.contractMonths}-month contract.`) : es ? " Sin contrato anual." : " No annual contract.";
-  return s;
-}
-
-/** Savings appear only when the visitor has entered their current bill. */
-export function savings(p: Plan, billCents: number | null): number | null {
-  if (!billCents || !isPriced(p)) return null;
-  const d = billCents - allInNow(p);
-  return d > 0 ? d : null;
+  if (speed && (p.downloadMbps ?? 0) > (top.downloadMbps ?? 0)) out.push(t("reasonFasterDownloads", { speed }));
+  return out;
 }

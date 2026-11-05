@@ -10,10 +10,11 @@
 
 export type ServiceId = "internet" | "tv" | "mobile" | "security" | "phone";
 export type Tech = "fiber" | "cable" | "fiveG" | "dsl" | "satellite" | "streaming" | "wireless" | "monitored" | "voip" | "landline";
+import type { Key } from "@/lib/i18n";
 export type Text = { en: string; es: string };
 export const T = (en: string, es: string): Text => ({ en, es });
 
-export const SERVICE_ORDER: ServiceId[] = ["internet", "tv", "mobile", "security", "phone"];
+export const SERVICE_ORDER: ServiceId[] = ["internet", "tv", "phone", "mobile", "security"];
 
 export const BUNDLE_PRESETS: { id: "internet-tv" | "internet-tv-phone" | "internet-tv-mobile" | "quad"; services: ServiceId[] }[] = [
   { id: "internet-tv", services: ["internet", "tv"] },
@@ -56,47 +57,46 @@ export const ADDRESS_TEMPLATES: (Omit<SampleAddress, "id" | "line1"> & { street:
 /* ------------------------------------------------------------------ */
 /*  Usage (business tiles from the one-pager; home tiles from the live site) */
 /* ------------------------------------------------------------------ */
-export const USAGE: Record<AddressType, { id: string; title: Text; desc: Text }[]> = {
+/** Usage tiles. Labels are keys into the official copy (lib/i18n.ts). */
+export const USAGE: Record<AddressType, { id: string; title: Key; desc: Key }[]> = {
   business: [
-    { id: "office", title: T("Office Operations", "Operaciones de oficina"), desc: T("Email, cloud apps, VoIP", "Correo, apps en la nube, VoIP") },
-    { id: "streaming", title: T("Media & Streaming", "Medios y streaming"), desc: T("Video conf, presentations", "Videoconferencias, presentaciones") },
-    { id: "data", title: T("Data-Heavy", "Uso intensivo de datos"), desc: T("Large uploads, backups", "Cargas grandes, respaldos") },
-    { id: "basic", title: T("Basic Business", "Negocio básico"), desc: T("Web browsing, email", "Navegación web, correo") },
+    { id: "office", title: "usage.businessWork", desc: "usage.businessWorkDesc" },
+    { id: "streaming", title: "usage.businessStreaming", desc: "usage.businessStreamingDesc" },
+    { id: "data", title: "usage.businessGaming", desc: "usage.businessGamingDesc" },
+    { id: "basic", title: "usage.businessCasual", desc: "usage.businessCasualDesc" },
   ],
   residential: [
-    { id: "casual", title: T("Casual", "Uso casual"), desc: T("Browsing & social media", "Navegación y redes sociales") },
-    { id: "remote", title: T("Remote Work", "Trabajo remoto"), desc: T("Video calls & uploads", "Videollamadas y cargas") },
-    { id: "4k", title: T("4K Streaming", "Streaming 4K"), desc: T("Netflix, YouTube, etc.", "Netflix, YouTube, etc.") },
-    { id: "gaming", title: T("Gaming", "Videojuegos"), desc: T("Online gaming, low ping", "Juegos en línea, baja latencia") },
+    { id: "casual", title: "usage.casual", desc: "usage.casualDesc" },
+    { id: "remote", title: "usage.work", desc: "usage.workDesc" },
+    { id: "4k", title: "usage.streaming", desc: "usage.streamingDesc" },
+    { id: "gaming", title: "usage.gaming", desc: "usage.gamingDesc" },
   ],
 };
 export const DEVICES = { min: 5, max: 100, default: 15 };
 
-export const GENRES = [
-  { id: "entertainment", label: T("Entertainment", "Entretenimiento") },
-  { id: "news", label: T("News", "Noticias") },
-  { id: "sports", label: T("Sports", "Deportes") },
-  { id: "lifestyle", label: T("Lifestyle", "Estilo de vida") },
-  { id: "onDemand", label: T("On-demand", "A la carta") },
+export const GENRES: { id: string; label: Key }[] = [
+  { id: "entertainment", label: "genre.entertainment" },
+  { id: "news", label: "genre.news" },
+  { id: "sports", label: "genre.sports" },
+  { id: "lifestyle", label: "genre.lifestyle" },
+  { id: "onDemand", label: "genre.onDemand" },
 ];
-export const PACKS = [
-  { id: "latino", label: T("Latino", "Latino") },
-  { id: "southAsian", label: T("South Asian", "Sur de Asia") },
-  { id: "southeastAsian", label: T("Southeast Asian", "Sudeste asiático") },
-  { id: "arabic", label: T("Arabic", "Árabe") },
-  { id: "eastAsian", label: T("East Asian", "Este de Asia") },
-  { id: "european", label: T("European", "Europeo") },
+export const PACKS: { id: string; label: Key }[] = [
+  { id: "latino", label: "intl.latino" },
+  { id: "southAsian", label: "intl.southAsian" },
+  { id: "southeastAsian", label: "intl.southeastAsian" },
+  { id: "arabic", label: "intl.arabic" },
+  { id: "eastAsian", label: "intl.eastAsian" },
+  { id: "european", label: "intl.european" },
 ];
 
-export const PRICE_DISCLAIMER: Text = T(
-  "Pricing shown reflects typical advertised rates and promotional offers available at the searched address and may vary by market, credit, and installation requirements. Provider fees, taxes, and equipment charges are confirmed at order.",
-  "Los precios mostrados reflejan tarifas anunciadas típicas y ofertas promocionales disponibles en la dirección buscada, y pueden variar según el mercado, el crédito y los requisitos de instalación. Los cargos del proveedor, impuestos y cargos de equipo se confirman al hacer el pedido.",
-);
+/** Official site links (titles come from the official copy). */
+export const SITE = "https://www.assuredsaving.com";
+export const FOOTER_LINKS: { group: Key; links: { key: Key; slug: string }[] }[] = [
+  { group: "aboutUs", links: [ { key: "nav_advertiser", slug: "advertiser-disclosure" }, { key: "nav_aria", slug: "ai-assistant" }, { key: "nav_pricing", slug: "pricing-and-availability" } ] },
+  { group: "help", links: [ { key: "nav_contact", slug: "contact" }, { key: "nav_accessibility", slug: "accessibility" }, { key: "nav_privacyChoices", slug: "privacy-choices" } ] },
+  { group: "legal", links: [ { key: "nav_terms", slug: "terms-of-use" }, { key: "nav_privacy", slug: "privacy-policy" }, { key: "nav_consent", slug: "communications-consent" }, { key: "nav_sms", slug: "sms-terms" }, { key: "nav_dnc", slug: "do-not-call-policy" }, { key: "nav_legal", slug: "legal" } ] },
+];
+export const siteUrl = (slug: string, lang: "en" | "es") => (lang === "en" ? `${SITE}/${slug}/` : `${SITE}/es/${slug}/`);
 
-export const SUPPORT = { phone: "(800) 555-0142", tel: "tel:+18005550142", hours: T("Mon to Fri, 9 AM to 5 PM ET", "Lun a vie, 9 AM a 5 PM ET") };
-export const LEGAL = {
-  terms: "https://www.assuredsaving.com/terms-of-use/",
-  privacy: "https://www.assuredsaving.com/privacy-policy/",
-  sms: "https://www.assuredsaving.com/sms-terms/",
-};
 

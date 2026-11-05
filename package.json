@@ -9,8 +9,10 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "contrast": "tsx scripts/contrast.ts",
-    "verify:data": "tsx scripts/verify-data.ts",
-    "check": "npm run typecheck && npm run lint && npm run contrast && npm run verify:data && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run contrast && npm run test && npm run build",
+    "test": "vitest run",
+    "copy": "tsx scripts/build-copy.ts",
+    "prebuild": "npm run copy"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -23,13 +25,19 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^15.5.29",
+    "jsdom": "^26.1.0",
     "tailwindcss": "^4",
     "tsx": "^4.19.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.1.0"
   }
 }

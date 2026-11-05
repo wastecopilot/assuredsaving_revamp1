@@ -30,7 +30,7 @@ function OnePager() {
       <main>
         <Hero />
         {s.stage >= STAGE.address && (
-          <div className="mx-auto max-w-6xl space-y-8 px-4 pt-10 sm:px-6 sm:pt-14">
+          <div className="mx-auto max-w-6xl space-y-8 px-4 pb-16 pt-10 sm:px-6 sm:pt-14">
             {s.stage >= STAGE.address && <AddressSection />}
             {s.stage >= STAGE.usage && s.services.includes("internet") && <UsageSection />}
             {s.stage >= STAGE.tv && s.services.includes("tv") && <TvSection />}

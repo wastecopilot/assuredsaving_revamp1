@@ -1,7 +1,7 @@
 /**
  * Calling hours and MOCKED phone checks for the Aria callback demo (adapted from my earlier one-pager build).
  * Nothing here contacts a real service.
- * Calling hours: Monday to Saturday, 9:00 AM to 8:00 PM in the chosen time zone.
+ * Calling hours: Monday to Saturday, 8:00 AM to 9:00 PM in the chosen time zone (official window).
  */
 import type { Lang } from "./i18n";
 
@@ -15,8 +15,8 @@ export const TIME_ZONES = [
   { id: "Pacific/Honolulu", en: "Hawaii (HT)", es: "Hawái (HT)" },
 ];
 
-const START = 9 * 60;
-const END = 20 * 60; // last start time is 7:30 PM
+const START = 8 * 60; // official: "Preferred Time (8am - 9pm)"
+const END = 21 * 60; // last start time is 8:30 PM
 const STEP = 30;
 
 function zoned(date: Date, timeZone: string) {
@@ -71,20 +71,45 @@ export function callingDays(now: Date, tz: string, lang: Lang, count = 6): Day[]
 }
 
 export const digits = (s: string) => s.replace(/\D/g, "");
+
+/** US number as 10 digits: accepts 10 digits, or 11 starting with 1. Never truncates. */
+export function nationalDigits(s: string): string {
+  const d = digits(s);
+  return d.length === 11 && d.startsWith("1") ? d.slice(1) : d;
+}
+
+/** Formats a complete or partial US number; anything longer is left as typed digits. */
 export function formatPhone(s: string) {
-  const d = digits(s).replace(/^1/, "").slice(0, 10);
+  const d = nationalDigits(s);
+  if (d.length > 10) return d.slice(0, 15);
   if (d.length < 4) return d;
   if (d.length < 7) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
   return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
 }
+
 export function phoneError(s: string): "empty" | "invalid" | null {
-  const d = digits(s).replace(/^1/, "");
-  if (d.length !== 10) return "empty";
-  if (/^[01]/.test(d) || /^\d{3}[01]/.test(d)) return "invalid";
+  const d = nationalDigits(s);
+  if (d.length < 10) return "empty";
+  if (d.length > 10) return "invalid"; // international or mistyped: reject, don't guess
+  if (/^[01]/.test(d) || /^\d{3}[01]/.test(d) || /^\d11/.test(d) || /^\d{3}11/.test(d)) return "invalid";
   return null;
 }
 /** DEMO RULE: numbers ending in 0000 act as if they are on the do-not-call list. */
 export const onDoNotCallList = (s: string) => digits(s).endsWith("0000");
 /** DEMO RULE: any 6 digits verify, except 000000. */
 export const codeOk = (code: string) => code !== "000000";
-export const emailOk = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s.trim());
+
+/** Linear-time email check (no overlapping groups), with RFC length limits. */
+export function emailOk(s: string) {
+  const v = s.trim();
+  if (v.length > 254 || /[\p{Cc}\p{Cf}]/u.test(v)) return false;
+  return /^[^\s@]{1,64}@(?:[^\s@.]+\.)+[^\s@.]{2,63}$/.test(v);
+}
+
+/** Removes control and invisible formatting characters (bidi overrides, zero-width) and squeezes spaces. */
+export const cleanText = (s: string) => s.normalize("NFC").replace(/[\p{Cc}\p{Cf}]/gu, "").replace(/\s+/g, " ").trim();
+/** A name needs at least two letters once invisible characters are removed. */
+export const nameOk = (s: string) => /\p{L}.*\p{L}/u.test(cleanText(s));
+
+/** Only known time zones; anything else falls back to Eastern. */
+export const safeZone = (z: string | undefined | null) => (TIME_ZONES.some((t) => t.id === z) ? (z as string) : "America/New_York");

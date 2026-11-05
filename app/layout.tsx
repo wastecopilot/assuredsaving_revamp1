@@ -1,14 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import { cssVariables } from "@/lib/tokens";
+import { translate } from "@/lib/i18n";
 import "./globals.css";
 
-/* One geometric family for UI and display, with tabular figures for prices. */
-const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-body", display: "swap" });
+const publicSans = Public_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-body", display: "swap" });
 
-const title = "Assured Saving | Compare internet, TV and mobile plans with all-in pricing";
-const description =
-  "Choose your services, enter your address and compare plans from US providers with every required fee included. Design preview with sample data.";
+/* Same page title as https://www.assuredsaving.com/ */
+const title = "Assured Saving | Agentic AI Assistant";
+const description = translate("en", "heroDescription");
 
 export const metadata: Metadata = {
   title,
@@ -17,13 +17,13 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title, description },
 };
 
-export const viewport: Viewport = { themeColor: "#0A0E2E", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#0A1F44", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={jakarta.variable}>
+    <html lang="en" className={publicSans.variable}>
       <head>
-        <style dangerouslySetInnerHTML={{ __html: `${cssVariables()}:root{--font-heading:var(--font-body)}` }} />
+        <style dangerouslySetInnerHTML={{ __html: cssVariables() }} />
       </head>
       <body>{children}</body>
     </html>

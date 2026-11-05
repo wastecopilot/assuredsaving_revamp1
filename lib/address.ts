@@ -4,8 +4,9 @@
  *
  * MOCKED, no real lookup:
  * - Fixed suggestions match first (inclusive, any part of the address).
- * - When fewer than 3 match, realistic US addresses are built from whatever the
- *   visitor typed, so the list never goes empty.
+ * - When fewer than 3 match and the query starts with a street number, sample US
+ *   addresses are built from what was typed. Without a street number nothing is
+ *   built (the official site asks for one), so the official error shows instead.
  * - Every suggestion carries its own address type (residential or business),
  *   so the visitor never chooses it. Typed text with business words such as
  *   "Suite" or "Office" is always treated as business.
@@ -21,15 +22,17 @@ export const formatAddress = (a: SampleAddress) => `${a.line1}, ${a.city}, ${a.s
 const titleCase = (s: string) => s.replace(/\b([a-z])/g, (m) => m.toUpperCase());
 
 export function getAddressSuggestions(query: string): SampleAddress[] {
-  const cleaned = query.trim();
+  const cleaned = query.normalize("NFC").replace(/[\p{Cc}\p{Cf}]/gu, "").trim();
   if (!cleaned) return [];
   const needle = cleaned.toLowerCase();
 
   const base = ADDRESSES.filter((a) => formatAddress(a).toLowerCase().includes(needle));
   if (base.length >= 3) return base.slice(0, 5);
+  // The official site asks for a street number; without one, only fixed matches.
+  if (!/^\d/.test(cleaned)) return base.slice(0, 5);
 
-  // Street part only (ignore any city typed after a comma).
-  const typed = titleCase(cleaned.split(",")[0].replace(/\s+/g, " ").trim());
+  // Street part only (ignore any city typed after a comma). Capped to a sane length.
+  const typed = titleCase(cleaned.split(",")[0].replace(/\s+/g, " ").trim()).slice(0, 80);
   // Just a house number? Put it in front of the template street, like the original.
   const onlyNumber = /^\d+[A-Za-z]?$/.test(typed);
   const taken = new Set(base.map((a) => formatAddress(a).toLowerCase()));
